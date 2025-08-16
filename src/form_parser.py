@@ -1,9 +1,7 @@
 def parse_form_to_orcamento_dict(payload: dict) -> dict:
-    """Converte dados do formulário (JSON) para o dicionário esperado por quouteStyle."""
     def _to_list(val):
         if not val: return []
         if isinstance(val, list): return [s for s in val if str(s).strip()]
-        # se vier como string única com quebras de linha
         return [s.strip() for s in str(val).splitlines() if s.strip()]
 
     def _to_float(val):
@@ -19,7 +17,7 @@ def parse_form_to_orcamento_dict(payload: dict) -> dict:
         "servico": _to_list(payload.get("servico")),
         "valor_total": _to_float(payload.get("valor_total")),
         "sinal": _to_float(payload.get("sinal")),
-        "emissao": payload.get("emissao") or "",   # já vem DD/MM/AAAA do form.js
+        "emissao": payload.get("emissao") or "",
         "validade": payload.get("validade") or "",
         "observacoes": _to_list(payload.get("observacoes")),
         "contato": {
