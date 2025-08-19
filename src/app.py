@@ -25,8 +25,7 @@ def index():
 def salvar_orcamento():
     data = request.json
     data['criado_em'] = datetime.now()
-    if isinstance(data, dict):
-        data['pdf_location'] = generate_pdf(data)
+    data['pdf_location'] = generate_pdf(data)
 
     try:
         result = orcamentos_collection.insert_one(data)

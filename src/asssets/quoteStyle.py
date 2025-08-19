@@ -112,6 +112,7 @@ def quouteStyle(data: dict):
     # === Contato ===
     elements.append(Paragraph("CONTATO E INFORMACOES DE PAGAMENTO", section_title))
     contato = data["contato"]
+    print(contato)
     elements.append(Paragraph(f"{contato['nome']} – {contato['telefone']}", normal_text))
     elements.append(Paragraph(f"E-mail: {contato['email']}", normal_text))
 

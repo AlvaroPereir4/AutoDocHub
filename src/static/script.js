@@ -40,7 +40,7 @@ function updateSaldo() {
 
 function updateOrcamentoPreview() {
   const data = {
-    titulo: v('titulo').value || "ORÇAMENTO DE SERVIÇOS",
+    titulo: v('titulo').value || "ORÇAMENTO",
     cliente: v('cliente').value || "[Nome do Cliente]",
     endereco: v('endereco').value || "[Endereço da Obra]",
     servicos: parseLines(v('servico').value),
