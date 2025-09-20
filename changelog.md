@@ -1,2 +1,2 @@
-
+    - Feature: Added readme.md with more information.
     - Feature: Added way to save receipt and general adjustment over this.
