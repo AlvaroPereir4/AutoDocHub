@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from serviceClass import Service
+from src.classes.serviceClass import Service
 
 @dataclass
 class Receipt:
