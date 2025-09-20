@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from pymongo import MongoClient
 from datetime import datetime
 from src.generatePDFParser import generate_pdf
+from src.generateReceiptPDF import generate_receipt_pdf
 
 app = Flask(__name__)
 MONGO_URI = "mongodb://localhost:27017/"
@@ -50,12 +51,16 @@ def buscar_orcamentos():
 def salvar_recibo():
     data = request.json
     data['criado_em'] = datetime.now()
-    data['orcamento_id'] = data.get('orcamento_id')
-
+    
     try:
+        # Gera o PDF do recibo
+        pdf_path = generate_receipt_pdf(data)
+        data['pdf_location'] = pdf_path
+        
         result = recibos_collection.insert_one(data)
-        return jsonify({"success": True, "id": str(result.inserted_id)}), 201
+        return jsonify({"success": True, "id": str(result.inserted_id), "pdf_path": pdf_path}), 201
     except Exception as e:
+        print(f"Erro ao salvar recibo: {e}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":

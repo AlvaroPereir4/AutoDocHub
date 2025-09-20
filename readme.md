@@ -1,3 +1,4 @@
-Como rodar:
 
-python -m src.app                                                                          
+
+how to run local:
+    python -m src.app                                                                          

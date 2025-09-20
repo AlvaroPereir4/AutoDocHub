@@ -1,24 +1,29 @@
 const v = id => document.getElementById(id);
 
 // --- Estado da Aplicação ---
-let orcamentosData = []; // Armazena todos os orçamentos buscados
-let selectedOrcamento = null; // Armazena o orçamento selecionado para o recibo
+let orcamentosData = [];
+let selectedOrcamento = null;
 
 // --- Funções Utilitárias ---
 const parseLines = txt => txt.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
 const toBRDate = iso => iso ? new Date(iso + 'T03:00:00').toLocaleDateString('pt-BR') : '';
 const formatCurrency = num => `R$ ${Number(num || 0).toFixed(2).replace('.', ',')}`;
 
+function showMessage(element, message, type) {
+    element.textContent = message;
+    element.className = `message ${type}`;
+    element.style.display = 'block';
+    setTimeout(() => element.style.display = 'none', 5000);
+}
+
 // --- Lógica das ABAS ---
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
-    // Esconde/mostra conteúdo e ativa/desativa abas
     document.querySelector('.tab.active').classList.remove('active');
     document.querySelector('.tab-content.active').classList.remove('active');
     tab.classList.add('active');
     v(tab.dataset.tab).classList.add('active');
     
-    // Se a aba de recibos for aberta, carrega os orçamentos
     if (tab.dataset.tab === 'recibos') {
       loadOrcamentos();
     }
@@ -112,7 +117,7 @@ async function saveOrcamento(e) {
     servico: parseLines(v('servico').value),
     valor_total: parseFloat(v('valor_total').value),
     sinal: parseFloat(v('sinal').value),
-    emissao: v('emissao').value, // Envia no formato YYYY-MM-DD
+    emissao: v('emissao').value,
     validade: v('validade').value,
     observacoes: parseLines(v('observacoes').value),
     contato: {
@@ -174,7 +179,7 @@ async function loadOrcamentos() {
 
 function renderOrcamentoList(data) {
   const listDiv = v('orcList');
-  listDiv.innerHTML = ''; // Limpa a lista
+  listDiv.innerHTML = '';
   if (data.length === 0) {
     listDiv.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--muted);">Nenhum orçamento encontrado.</p>';
     return;
@@ -196,52 +201,78 @@ function selectOrcamento(id) {
     selectedOrcamento = orcamentosData.find(o => o._id === id);
     if (!selectedOrcamento) return;
 
-    // Remove a seleção de outros itens
     document.querySelectorAll('.orc-item.selected').forEach(el => el.classList.remove('selected'));
-    // Adiciona a seleção ao item clicado
     document.querySelector(`.orc-item[data-id="${id}"]`).classList.add('selected');
     
-    updateReciboPreview(selectedOrcamento);
+    populateReciboEditor(selectedOrcamento);
+    v('reciboEditor').style.display = 'block';
+    v('gerarReciboBtn').disabled = false;
     v('reciboMsg').style.display = 'none';
 }
 
-function updateReciboPreview(orc) {
-    if (!orc) {
-        v('reciboPreviewContent').textContent = 'Selecione um orçamento da lista para gerar o recibo.';
-        return;
-    }
+function populateReciboEditor(orc) {
+    const today = new Date().toISOString().split('T')[0];
+    
+    v('recibo_cliente').value = orc.cliente;
+    v('recibo_endereco').value = orc.endereco;
+    v('recibo_data').value = today;
+    v('recibo_servicos').value = orc.servico.join('\n');
+    v('recibo_sinal').value = orc.sinal;
+    v('recibo_restante').value = orc.valor_total - orc.sinal;
+    v('recibo_total').value = orc.valor_total;
+    v('recibo_contato_nome').value = orc.contato.nome;
+    v('recibo_contato_pix').value = orc.contato.pix;
+    
+    updateReciboPreview();
+}
 
-    const servicosList = orc.servico.map((item, i) => `${i + 1}. ${item}`).join('\n');
-    const saldo = orc.valor_total - orc.sinal;
+function updateReciboPreview() {
+    const cliente = v('recibo_cliente').value || '[Cliente]';
+    const endereco = v('recibo_endereco').value || '[Endereço]';
+    const data = toBRDate(v('recibo_data').value) || '[Data]';
+    const servicos = v('recibo_servicos').value.split('\n').filter(s => s.trim()).map((s, i) => `${i + 1}. ${s}`).join('\n') || '[Serviços]';
+    const sinal = parseFloat(v('recibo_sinal').value || 0);
+    const restante = parseFloat(v('recibo_restante').value || 0);
+    const total = sinal + restante;
+    const nome = v('recibo_contato_nome').value || '[Nome]';
+    const pix = v('recibo_contato_pix').value || '[PIX]';
+    
+    v('recibo_total').value = total.toFixed(2);
 
     const previewText = `
 RECIBO DE PRESTAÇÃO DE SERVIÇO
 ========================================
 
-Aos cuidados do(a) Sr(a).: ${orc.cliente}
-Local realizado o serviço: ${orc.endereco}
-Data de Emissão do Recibo: ${new Date().toLocaleDateString('pt-BR')}
+Aos cuidados do(a) Sr(a).: ${cliente}
+Local realizado o serviço: ${endereco}
+Data de Emissão do Recibo: ${data}
 
 ----------------------------------------
 SERVIÇO QUE FOI REALIZADO
 ----------------------------------------
-${servicosList}
+${servicos}
 
 ----------------------------------------
 VALORES E PAGAMENTO
 ----------------------------------------
-Sinal Recebido: ........ ${formatCurrency(orc.sinal)}
-Valor Restante Pago: ... ${formatCurrency(saldo)}
-VALOR TOTAL DO SERVIÇO:  ${formatCurrency(orc.valor_total)}
+Sinal Recebido: ........ ${formatCurrency(sinal)}
+Valor Restante Pago: ... ${formatCurrency(restante)}
+VALOR TOTAL DO SERVIÇO:  ${formatCurrency(total)}
 
 ----------------------------------------
 DADOS BANCÁRIOS PARA PAGAMENTO
 ----------------------------------------
-${orc.contato.nome}
-Chave PIX: ${orc.contato.pix}
+${nome}
+Chave PIX: ${pix}
 `;
     v('reciboPreviewContent').textContent = previewText.trim();
 }
+
+// Listeners para atualizar preview em tempo real
+['recibo_cliente', 'recibo_endereco', 'recibo_data', 'recibo_servicos', 
+ 'recibo_sinal', 'recibo_restante', 'recibo_contato_nome', 'recibo_contato_pix'].forEach(id => {
+    v(id).addEventListener('input', updateReciboPreview);
+});
 
 v('searchOrc').addEventListener('input', e => {
     const searchTerm = e.target.value.toLowerCase();
@@ -261,13 +292,17 @@ async function saveRecibo() {
     
     const payload = {
         orcamento_id: selectedOrcamento._id,
-        cliente: selectedOrcamento.cliente,
-        endereco: selectedOrcamento.endereco,
-        servico: selectedOrcamento.servico,
-        valor_total: selectedOrcamento.valor_total,
-        sinal: selectedOrcamento.sinal,
-        contato: selectedOrcamento.contato,
-        data_recibo: new Date().toISOString().split('T')[0]
+        cliente: v('recibo_cliente').value,
+        endereco: v('recibo_endereco').value,
+        data_recibo: v('recibo_data').value,
+        servicos: v('recibo_servicos').value.split('\n').filter(s => s.trim()),
+        sinal: parseFloat(v('recibo_sinal').value),
+        valor_restante: parseFloat(v('recibo_restante').value),
+        valor_total: parseFloat(v('recibo_total').value),
+        contato: {
+            nome: v('recibo_contato_nome').value,
+            pix: v('recibo_contato_pix').value
+        }
     };
 
     try {
@@ -278,9 +313,9 @@ async function saveRecibo() {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Falha ao salvar o recibo.');
-
-        showMessage(v('reciboMsg'), `✅ Recibo salvo com sucesso!`, 'success');
-
+        
+        showMessage(v('reciboMsg'), `✅ Recibo gerado com sucesso! ID: ${data.id}`, 'success');
+        
     } catch (err) {
         showMessage(v('reciboMsg'), `❌ Erro: ${err.message}`, 'error');
     }
@@ -288,20 +323,9 @@ async function saveRecibo() {
 
 v('gerarReciboBtn').addEventListener('click', saveRecibo);
 
-// --- Função genérica para exibir mensagens ---
-function showMessage(element, message, type) {
-    element.className = `message ${type}`;
-    element.textContent = message;
-    element.style.display = 'block';
-    setTimeout(() => {
-        element.style.display = 'none';
-    }, 5000);
-}
-
-
 // --- Inicialização ---
 document.addEventListener('DOMContentLoaded', () => {
-    v('emissao').valueAsDate = new Date(); // Preenche a data de emissão com hoje
+    v('emissao').valueAsDate = new Date();
     updateSaldo();
     updateOrcamentoPreview();
 });
