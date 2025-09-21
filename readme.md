@@ -49,7 +49,7 @@ Professional automated quote and receipt generation system with advanced PDF exp
 
 2. **Install dependencies**
    ```bash
-   pip install flask pymongo reportlab
+   pip install -r requirements.txt
    ```
 
 3. **Setup MongoDB**
