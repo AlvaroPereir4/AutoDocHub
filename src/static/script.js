@@ -8,7 +8,7 @@ let currentConfig = {
   colorPalette: 'default',
   fontSize: '14',
   preforms: { servicos: [], observacoes: [] },
-  userInfo: { nome: 'Álvaro Pereira', telefone: '11 96042-0895', email: 'alvaropereirasantos9@gmail.com', pix: '11 96042-0895' },
+  userInfo: { nome: '', telefone: '', email: '', pix: '' },
   language: 'ptbr'
 };
 
@@ -376,10 +376,10 @@ function populateConfigForm() {
   v('languageSelect').value = currentConfig.language || 'ptbr';
   
   const userInfo = currentConfig.userInfo || {};
-  v('userNome').value = userInfo.nome || 'Álvaro Pereira';
-  v('userTelefone').value = userInfo.telefone || '11 96042-0895';
-  v('userEmail').value = userInfo.email || 'alvaropereirasantos9@gmail.com';
-  v('userPix').value = userInfo.pix || '11 96042-0895';
+  v('userNome').value = userInfo.nome || '';
+  v('userTelefone').value = userInfo.telefone || '';
+  v('userEmail').value = userInfo.email || '';
+  v('userPix').value = userInfo.pix || '';
   
   renderPreformsList();
   updateUserFormFields();
@@ -498,10 +498,10 @@ function updateConfigPreview() {
 
 function updateUserFormFields() {
   const userInfo = currentConfig.userInfo || {};
-  v('contato_nome').value = userInfo.nome || 'Álvaro Pereira';
-  v('contato_tel').value = userInfo.telefone || '11 96042-0895';
-  v('contato_email').value = userInfo.email || 'alvaropereirasantos9@gmail.com';
-  v('contato_pix').value = userInfo.pix || '11 96042-0895';
+  v('contato_nome').value = userInfo.nome || '';
+  v('contato_tel').value = userInfo.telefone || '';
+  v('contato_email').value = userInfo.email || '';
+  v('contato_pix').value = userInfo.pix || '';
 }
 
 async function saveConfig() {

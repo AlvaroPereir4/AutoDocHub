@@ -7,7 +7,7 @@ class Config:
         self.color_palette = color_palette if color_palette in self.VALID_PALETTES else "default"
         self.font_size = str(font_size)
         self.preforms = preforms or {"servicos": [], "observacoes": []}
-        self.user_info = user_info or {"nome": "Álvaro Pereira", "telefone": "11 96042-0895", "email": "alvaropereirasantos9@gmail.com", "pix": "11 96042-0895"}
+        self.user_info = user_info or {"nome": "", "telefone": "", "email": "", "pix": ""}
         self.language = language if language in ["ptbr", "en"] else "ptbr"
     
     def to_dict(self):
@@ -29,7 +29,7 @@ class Config:
             color_palette=data.get("colorPalette", "default"),
             font_size=data.get("fontSize", "14"),
             preforms=data.get("preforms", {"servicos": [], "observacoes": []}),
-            user_info=data.get("userInfo", {"nome": "Álvaro Pereira", "telefone": "11 96042-0895", "email": "alvaropereirasantos9@gmail.com", "pix": "11 96042-0895"}),
+            user_info=data.get("userInfo", {"nome": "", "telefone": "", "email": "", "pix": ""}),
             language=data.get("language", "ptbr")
         )
     
@@ -77,10 +77,10 @@ class Config:
                 ]
             },
             user_info={
-                "nome": "Álvaro Pereira",
-                "telefone": "11 96042-0895",
-                "email": "alvaropereirasantos9@gmail.com",
-                "pix": "11 96042-0895"
+                "nome": "",
+                "telefone": "",
+                "email": "",
+                "pix": ""
             },
             language="ptbr"
         )
