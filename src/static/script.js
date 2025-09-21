@@ -1,22 +1,30 @@
 const v = id => document.getElementById(id);
 
-// --- Estado da Aplicação ---
+// --- Application State ---
 let orcamentosData = [];
 let selectedOrcamento = null;
+let currentConfig = {
+  theme: 'light',
+  colorPalette: 'default',
+  fontSize: '14',
+  preforms: { servicos: [], observacoes: [] },
+  userInfo: { nome: 'Álvaro Pereira', telefone: '11 96042-0895', email: 'alvaropereirasantos9@gmail.com', pix: '11 96042-0895' },
+  language: 'ptbr'
+};
 
-// --- Funções Utilitárias ---
+// --- Utility Functions ---
 const parseLines = txt => txt.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
 const toBRDate = iso => iso ? new Date(iso + 'T03:00:00').toLocaleDateString('pt-BR') : '';
 const formatCurrency = num => `R$ ${Number(num || 0).toFixed(2).replace('.', ',')}`;
 
 function showMessage(element, message, type) {
-    element.textContent = message;
+    element.innerHTML = message;
     element.className = `message ${type}`;
     element.style.display = 'block';
-    setTimeout(() => element.style.display = 'none', 5000);
+    setTimeout(() => element.style.display = 'none', 8000);
 }
 
-// --- Lógica das ABAS ---
+// --- Tab Logic ---
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelector('.tab.active').classList.remove('active');
@@ -26,12 +34,14 @@ document.querySelectorAll('.tab').forEach(tab => {
     
     if (tab.dataset.tab === 'recibos') {
       loadOrcamentos();
+    } else if (tab.dataset.tab === 'config') {
+      loadConfig();
     }
   });
 });
 
 // ==========================================================
-// SEÇÃO DE ORÇAMENTOS
+// QUOTES SECTION
 // ==========================================================
 
 const orcForm = v('orcForm');
@@ -137,7 +147,7 @@ async function saveOrcamento(e) {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Falha ao salvar o orçamento.');
     
-    showMessage(msgDiv, `✅ Orçamento salvo com sucesso! ID: ${data.id}`, 'success');
+    showMessage(msgDiv, `✅ ${t('quoteSavedSuccess')}<br><strong>${t('client')}:</strong> ${data.cliente}<br><strong>PDF:</strong> ${data.pdf_path}`, 'success');
     orcForm.reset();
     updateSaldo();
     updateOrcamentoPreview();
@@ -147,7 +157,7 @@ async function saveOrcamento(e) {
   }
 }
 
-// Listeners para a seção de orçamentos
+// Listeners for quotes section
 orcForm.addEventListener('input', () => {
   updateSaldo();
   updateOrcamentoPreview();
@@ -161,12 +171,12 @@ v('resetBtn').addEventListener('click', () => {
 });
 
 // ==========================================================
-// SEÇÃO DE RECIBOS
+// RECEIPTS SECTION
 // ==========================================================
 
 async function loadOrcamentos() {
   const listDiv = v('orcList');
-  listDiv.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--muted);">Carregando orçamentos...</p>';
+  listDiv.innerHTML = `<p style="padding: 20px; text-align: center; color: var(--muted);">${t('loadingQuotes')}</p>`;
   try {
     const res = await fetch('/api/orcamentos');
     if (!res.ok) throw new Error('Falha ao buscar dados.');
@@ -181,7 +191,7 @@ function renderOrcamentoList(data) {
   const listDiv = v('orcList');
   listDiv.innerHTML = '';
   if (data.length === 0) {
-    listDiv.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--muted);">Nenhum orçamento encontrado.</p>';
+    listDiv.innerHTML = `<p style="padding: 20px; text-align: center; color: var(--muted);">${t('noQuotesFound')}</p>`;
     return;
   }
   data.forEach(orc => {
@@ -268,7 +278,7 @@ Chave PIX: ${pix}
     v('reciboPreviewContent').textContent = previewText.trim();
 }
 
-// Listeners para atualizar preview em tempo real
+// Listeners to update preview in real time
 ['recibo_cliente', 'recibo_endereco', 'recibo_data', 'recibo_servicos', 
  'recibo_sinal', 'recibo_restante', 'recibo_contato_nome', 'recibo_contato_pix'].forEach(id => {
     v(id).addEventListener('input', updateReciboPreview);
@@ -286,7 +296,7 @@ v('searchOrc').addEventListener('input', e => {
 
 async function saveRecibo() {
     if (!selectedOrcamento) {
-        showMessage(v('reciboMsg'), '❌ Por favor, selecione um orçamento primeiro.', 'error');
+        showMessage(v('reciboMsg'), `❌ ${t('selectQuoteFirst')}`, 'error');
         return;
     }
     
@@ -314,7 +324,7 @@ async function saveRecibo() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Falha ao salvar o recibo.');
         
-        showMessage(v('reciboMsg'), `✅ Recibo gerado com sucesso! ID: ${data.id}`, 'success');
+        showMessage(v('reciboMsg'), `✅ ${t('receiptGeneratedSuccess')}<br><strong>${t('client')}:</strong> ${data.cliente}<br><strong>PDF:</strong> ${data.pdf_path}`, 'success');
         
     } catch (err) {
         showMessage(v('reciboMsg'), `❌ Erro: ${err.message}`, 'error');
@@ -323,9 +333,289 @@ async function saveRecibo() {
 
 v('gerarReciboBtn').addEventListener('click', saveRecibo);
 
-// --- Inicialização ---
-document.addEventListener('DOMContentLoaded', () => {
+// Listener for Enter key in pre-form field
+v('preformText').addEventListener('keypress', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addPreform();
+  }
+});
+
+// ==========================================================
+// SETTINGS SECTION
+// ==========================================================
+
+async function loadConfig() {
+  try {
+    console.log('Carregando configurações...');
+    const res = await fetch('/api/config');
+    const data = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(data.error || 'Falha ao carregar configurações');
+    }
+    
+    currentConfig = data;
+    console.log('Configurações carregadas:', currentConfig);
+    
+    populateConfigForm();
+    updateConfigPreview();
+    updatePreformSelectors();
+    applyConfig(currentConfig);
+    
+  } catch (e) {
+    console.error('Erro ao carregar configurações:', e);
+    showMessage(v('configMsg'), `❌ Erro ao carregar: ${e.message}`, 'error');
+  }
+}
+
+function populateConfigForm() {
+  v('themeSelect').value = currentConfig.theme || 'light';
+  v('colorPalette').value = currentConfig.colorPalette || 'default';
+  v('fontSize').value = currentConfig.fontSize || '14';
+  v('languageSelect').value = currentConfig.language || 'ptbr';
+  
+  const userInfo = currentConfig.userInfo || {};
+  v('userNome').value = userInfo.nome || 'Álvaro Pereira';
+  v('userTelefone').value = userInfo.telefone || '11 96042-0895';
+  v('userEmail').value = userInfo.email || 'alvaropereirasantos9@gmail.com';
+  v('userPix').value = userInfo.pix || '11 96042-0895';
+  
+  renderPreformsList();
+  updateUserFormFields();
+}
+
+function renderPreformsList() {
+  const container = v('preformsList');
+  container.innerHTML = '';
+  
+  ['servicos', 'observacoes'].forEach(type => {
+    const items = currentConfig.preforms[type] || [];
+    if (items.length > 0) {
+      const section = document.createElement('div');
+      section.innerHTML = `<h4>${type === 'servicos' ? t('services') : t('observations')}</h4>`;
+      
+      items.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'preform-item';
+        div.innerHTML = `
+          <span>${item}</span>
+          <button class="btn secondary" onclick="removePreform('${type}', ${index})">${t('remove')}</button>
+        `;
+        section.appendChild(div);
+      });
+      container.appendChild(section);
+    }
+  });
+}
+
+function addPreform() {
+  const type = v('preformType').value;
+  const text = v('preformText').value.trim();
+  
+  if (!text) {
+    showMessage(v('configMsg'), `❌ ${t('enterPreformText')}`, 'error');
+    return;
+  }
+  
+  if (!currentConfig.preforms[type]) currentConfig.preforms[type] = [];
+  currentConfig.preforms[type].push(text);
+  
+  v('preformText').value = '';
+  renderPreformsList();
+  updateConfigPreview();
+  updatePreformSelectors();
+}
+
+function removePreform(type, index) {
+  currentConfig.preforms[type].splice(index, 1);
+  renderPreformsList();
+  updateConfigPreview();
+  updatePreformSelectors();
+}
+
+function updatePreformSelectors() {
+  const servicoSelect = v('servicoPreform');
+  const obsSelect = v('observacoesPreform');
+  
+  servicoSelect.innerHTML = `<option value="">${t('selectPreform')}</option>`;
+  obsSelect.innerHTML = `<option value="">${t('selectPreform')}</option>`;
+  
+  (currentConfig.preforms.servicos || []).forEach(item => {
+    const option = document.createElement('option');
+    option.value = item;
+    option.textContent = item;
+    servicoSelect.appendChild(option);
+  });
+  
+  (currentConfig.preforms.observacoes || []).forEach(item => {
+    const option = document.createElement('option');
+    option.value = item;
+    option.textContent = item;
+    obsSelect.appendChild(option);
+  });
+}
+
+function insertPreform(fieldId, text) {
+  if (!text) return;
+  const field = v(fieldId);
+  const currentText = field.value;
+  field.value = currentText ? currentText + '\n' + text : text;
+  updateOrcamentoPreview();
+}
+
+function updateConfigPreview() {
+  const preformsDiv = v('preformsPreview');
+  const appearanceDiv = v('appearancePreview');
+  const userInfoDiv = v('userInfoPreview');
+  
+  let preformsHtml = '';
+  ['servicos', 'observacoes'].forEach(type => {
+    const items = currentConfig.preforms[type] || [];
+    if (items.length > 0) {
+      preformsHtml += `<strong>${type === 'servicos' ? 'Serviços' : 'Observações'}:</strong><br>`;
+      items.forEach(item => preformsHtml += `• ${item}<br>`);
+      preformsHtml += '<br>';
+    }
+  });
+  
+  preformsDiv.innerHTML = preformsHtml || t('noPreforms');
+  
+  appearanceDiv.innerHTML = `
+    <strong>${t('theme')}:</strong> ${currentConfig.theme}<br>
+    <strong>${t('colorPalette')}:</strong> ${currentConfig.colorPalette}<br>
+    <strong>${t('font')}:</strong> ${currentConfig.fontSize}px
+  `;
+  
+  const userInfo = currentConfig.userInfo || {};
+  userInfoDiv.innerHTML = `
+    <strong>${t('name')}:</strong> ${userInfo.nome || t('notDefined')}<br>
+    <strong>${t('phone')}:</strong> ${userInfo.telefone || t('notDefined')}<br>
+    <strong>${t('email')}:</strong> ${userInfo.email || t('notDefined')}<br>
+    <strong>${t('pix')}:</strong> ${userInfo.pix || t('notDefined')}
+  `;
+}
+
+function updateUserFormFields() {
+  const userInfo = currentConfig.userInfo || {};
+  v('contato_nome').value = userInfo.nome || 'Álvaro Pereira';
+  v('contato_tel').value = userInfo.telefone || '11 96042-0895';
+  v('contato_email').value = userInfo.email || 'alvaropereirasantos9@gmail.com';
+  v('contato_pix').value = userInfo.pix || '11 96042-0895';
+}
+
+async function saveConfig() {
+  currentConfig.theme = v('themeSelect').value;
+  currentConfig.colorPalette = v('colorPalette').value;
+  currentConfig.fontSize = v('fontSize').value;
+  currentConfig.language = v('languageSelect').value;
+  currentConfig.userInfo = {
+    nome: v('userNome').value,
+    telefone: v('userTelefone').value,
+    email: v('userEmail').value,
+    pix: v('userPix').value
+  };
+  
+  console.log('Salvando configurações:', currentConfig);
+  
+  try {
+    const res = await fetch('/api/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(currentConfig)
+    });
+    
+    const result = await res.json();
+    console.log('Resposta do servidor:', result);
+    
+    if (!res.ok) {
+      throw new Error(result.error || 'Falha ao salvar configurações');
+    }
+    
+    applyConfig(currentConfig);
+    setLanguage(currentConfig.language);
+    updateConfigPreview();
+    updateUserFormFields();
+    showMessage(v('configMsg'), `✅ ${t('configSavedSuccess')}`, 'success');
+    
+  } catch (e) {
+    console.error('Erro ao salvar config:', e);
+    showMessage(v('configMsg'), `❌ Erro: ${e.message}`, 'error');
+  }
+}
+
+function applyConfig(config) {
+  document.documentElement.setAttribute('data-theme', config.theme || 'light');
+  document.documentElement.setAttribute('data-palette', config.colorPalette || 'default');
+  document.body.style.fontSize = (config.fontSize || 14) + 'px';
+  setLanguage(config.language || 'ptbr');
+}
+
+// Listeners for settings
+v('addPreformBtn').addEventListener('click', addPreform);
+v('saveConfigBtn').addEventListener('click', saveConfig);
+['themeSelect', 'colorPalette', 'fontSize', 'languageSelect'].forEach(id => {
+  v(id).addEventListener('change', updateConfigPreview);
+});
+
+v('languageSelect').addEventListener('change', () => {
+  setLanguage(v('languageSelect').value);
+});
+['userNome', 'userTelefone', 'userEmail', 'userPix'].forEach(id => {
+  v(id).addEventListener('input', () => {
+    currentConfig.userInfo = {
+      nome: v('userNome').value,
+      telefone: v('userTelefone').value,
+      email: v('userEmail').value,
+      pix: v('userPix').value
+    };
+    updateConfigPreview();
+  });
+});
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', async () => {
     v('emissao').valueAsDate = new Date();
     updateSaldo();
     updateOrcamentoPreview();
+    
+    // Load saved settings
+    try {
+      console.log('Carregando configurações iniciais...');
+      const res = await fetch('/api/config');
+      const data = await res.json();
+      
+      if (res.ok) {
+        currentConfig = data;
+        console.log('Configurações iniciais carregadas:', currentConfig);
+        applyConfig(currentConfig);
+        updatePreformSelectors();
+        updateUserFormFields();
+        updateAllTexts();
+      } else {
+        console.log('Usando configurações padrão');
+      }
+    } catch (e) {
+      console.error('Erro ao carregar configurações iniciais:', e);
+      console.log('Usando configurações padrão');
+    }
 });
+
+// Global functions
+window.insertPreform = insertPreform;
+window.removePreform = removePreform;
+
+function toggleConfigGroup(groupId) {
+  const content = v(groupId + '-content');
+  const icon = content.previousElementSibling.querySelector('.toggle-icon');
+  
+  if (content.classList.contains('open')) {
+    content.classList.remove('open');
+    icon.classList.remove('open');
+  } else {
+    content.classList.add('open');
+    icon.classList.add('open');
+  }
+}
+
+window.toggleConfigGroup = toggleConfigGroup;

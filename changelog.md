@@ -1,2 +1,8 @@
-    - Feature: Added readme.md with more information.
-    - Feature: Added way to save receipt and general adjustment over this.
+    - Fix: File name sanitization and format validation
+    - Feature: Added config collection to save application user settings
+    - Feature: Added comprehensive README.md with detailed information
+    - Feature: Added receipt generation functionality with general improvements
+    - Feature: Implemented internationalization system (Portuguese/English)
+    - Feature: Added theme system with multiple color palettes
+    - Feature: Added pre-forms management for reusable text templates
+    - Feature: Added collapsible configuration groups for better UX

@@ -40,76 +40,173 @@
     .orc-item:hover { background-color: var(--accent-light); }
     .orc-item.selected { background-color: var(--accent); color: #fff; }
     #searchOrc { margin-bottom: 10px; }
-    pre { white-space: pre-wrap; word-wrap: break-word; font-family: 'Courier New', Courier, monospace; font-size: 13px; line-height: 1.6; color: #333; }    #reciboEditor { margin-bottom: 20px; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--accent-light); }
+    pre { white-space: pre-wrap; word-wrap: break-word; font-family: 'Courier New', Courier, monospace; font-size: inherit; line-height: 1.6; color: var(--text); background: var(--card); padding: 15px; border-radius: 8px; border: 1px solid var(--line); }    #reciboEditor { margin-bottom: 20px; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--accent-light); }
     #reciboEditor h3 { margin-bottom: 15px; color: var(--muted); font-size: 16px; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .preform-item { padding: 8px; margin: 5px 0; border: 1px solid var(--line); border-radius: 6px; background: var(--accent-light); display: flex; justify-content: space-between; align-items: center; }
+    .preform-item button { padding: 4px 8px; font-size: 12px; }
+    .preform-selector { margin: 10px 0; }
+    .preform-selector select { margin-right: 10px; }
+    h3 { font-size: 16px; margin: 20px 0 10px 0; color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 5px; }
+    h4 { font-size: 14px; margin: 10px 0 5px 0; color: var(--muted); font-weight: 600; }
+    select { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; background: var(--card); color: var(--text); }
+    #configPreview { padding: 15px; background: var(--accent-light); border-radius: 8px; border: 1px solid var(--line); }
+    .config-group { margin-bottom: 15px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .config-header { padding: 12px 15px; background: var(--accent-light); cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+    .config-header:hover { background: var(--line); }
+    .config-content { padding: 15px; display: none; }
+    .config-content.open { display: block; }
+    .toggle-icon { transition: transform 0.3s; }
+    .config-group .toggle-icon { transform: rotate(-90deg); }
+    .config-group .toggle-icon.open { transform: rotate(0deg); }
+    
+    /* Temas */
+    [data-theme="dark"] { 
+      --bg: #121212; 
+      --card: #1e1e1e; 
+      --text: #ffffff; 
+      --muted: #b0b0b0; 
+      --line: #333333; 
+      --accent: #bb86fc; 
+      --accent-light: #2a2a2a;
+      --success-bg: #1b5e20; 
+      --success-border: #2e7d32; 
+      --success-text: #4caf50;
+      --error-bg: #b71c1c; 
+      --error-border: #c62828; 
+      --error-text: #f44336;
+    }
+    [data-theme="intermediate"] { 
+      --bg: #f5f5f5; 
+      --card: #fafafa; 
+      --text: #212121; 
+      --muted: #757575; 
+      --line: #e0e0e0; 
+      --accent: #1976d2; 
+      --accent-light: #f3f4f6;
+    }
+    
+    /* Paletas */
+    [data-palette="blue"] { --accent: #2196f3; --accent-light: #e3f2fd; }
+    [data-palette="green"] { --accent: #4caf50; --accent-light: #e8f5e9; }
+    [data-palette="purple"] { --accent: #9c27b0; --accent-light: #f3e5f5; }
+    [data-palette="orange"] { --accent: #ff9800; --accent-light: #fff3e0; }
+    [data-palette="red"] { --accent: #f44336; --accent-light: #ffebee; }
+    
+    /* Ajustes para tema escuro */
+    [data-theme="dark"] input, 
+    [data-theme="dark"] textarea, 
+    [data-theme="dark"] select {
+      background: #2a2a2a;
+      color: #ffffff;
+      border-color: #404040;
+    }
+    [data-theme="dark"] input:focus, 
+    [data-theme="dark"] textarea:focus, 
+    [data-theme="dark"] select:focus {
+      border-color: var(--accent);
+    }
+    [data-theme="dark"] .preform-item {
+      background: #3a3a3a;
+      border-color: #404040;
+    }
+    
+    /* Ajustes para tema intermediário */
+    [data-theme="intermediate"] input, 
+    [data-theme="intermediate"] textarea, 
+    [data-theme="intermediate"] select {
+      background: #ffffff;
+      color: #333333;
+    }
+    
+    /* Rodapé */
+    .footer { text-align: center; padding: 20px; margin-top: 30px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>AutodocHub 📝</h1>
     <div class="tabs">
-      <div class="tab active" data-tab="orcamentos">Orçamentos</div>
-      <div class="tab" data-tab="recibos">Recibos</div>
+      <div class="tab active" data-tab="orcamentos" data-i18n="quotes">Orçamentos</div>
+      <div class="tab" data-tab="recibos" data-i18n="receipts">Recibos</div>
+      <div class="tab" data-tab="config" data-i18n="config">Config</div>
     </div>
 
     <div class="tab-content active" id="orcamentos">
       <div class="form-section">
-        <h2>Criar Orçamento</h2>
+        <h2 data-i18n="createQuote">Criar Orçamento</h2>
         <form id="orcForm">
           <div class="row row-1"><input id="titulo" name="titulo" type="hidden" value="ORÇAMENTO" /></div>
           <div class="row">
-            <div><label for="cliente">Cliente</label><input id="cliente" name="cliente" type="text" placeholder="Nome do cliente" required /></div>
-            <div><label for="endereco">Endereço / Local</label><input id="endereco" name="endereco" type="text" placeholder="Rua, número, cidade/UF" required /></div>
+            <div><label for="cliente" data-i18n="client">Cliente</label><input id="cliente" name="cliente" type="text" data-i18n="clientPlaceholder" placeholder="Nome do cliente" required /></div>
+            <div><label for="endereco" data-i18n="address">Endereço / Local</label><input id="endereco" name="endereco" type="text" data-i18n="addressPlaceholder" placeholder="Rua, número, cidade/UF" required /></div>
           </div>
           <div class="row row-1">
-            <div><label for="servico">Serviços Detalhados (um item por linha)</label><textarea id="servico" name="servico" placeholder="Ex: Remoção do rejunte antigo..." required></textarea></div>
+            <div>
+              <label for="servico" data-i18n="detailedServices">Serviços Detalhados (um item por linha)</label>
+              <div class="preform-selector">
+                <select id="servicoPreform" onchange="insertPreform('servico', this.value)">
+                  <option value="">Selecionar pre-form...</option>
+                </select>
+              </div>
+              <textarea id="servico" name="servico" data-i18n="servicesPlaceholder" placeholder="Ex: Remoção do rejunte antigo..." required></textarea>
+            </div>
           </div>
           <div class="money-row">
-            <div><label for="valor_total">Valor Total (R$)</label><input id="valor_total" name="valor_total" type="number" step="0.01" min="0" required /></div>
-            <div><label for="sinal">Sinal (R$)</label><input id="sinal" name="sinal" type="number" step="0.01" min="0" required /></div>
-            <div><label>Saldo Restante</label><div id="saldo_restante" class="saldo">R$ 0,00</div></div>
+            <div><label for="valor_total" data-i18n="totalValue">Valor Total (R$)</label><input id="valor_total" name="valor_total" type="number" step="0.01" min="0" required /></div>
+            <div><label for="sinal" data-i18n="downPayment">Sinal (R$)</label><input id="sinal" name="sinal" type="number" step="0.01" min="0" required /></div>
+            <div><label data-i18n="remainingBalance">Saldo Restante</label><div id="saldo_restante" class="saldo">R$ 0,00</div></div>
           </div>
           <div class="row">
-            <div><label for="emissao">Data de Emissão</label><input id="emissao" name="emissao" type="date" required /></div>
-            <div><label for="validade">Validade do Orçamento</label><input id="validade" name="validade" type="date" required /></div>
+            <div><label for="emissao" data-i18n="issueDate">Data de Emissão</label><input id="emissao" name="emissao" type="date" required /></div>
+            <div><label for="validade" data-i18n="validityDate">Validade do Orçamento</label><input id="validade" name="validade" type="date" required /></div>
           </div>
           <div class="row row-1">
-            <div><label for="observacoes">Observações / Condições (um item por linha)</label><textarea id="observacoes" name="observacoes" placeholder="Ex: Sinal de 50% para iniciar..."></textarea></div>
+            <div>
+              <label for="observacoes" data-i18n="observations">Observações / Condições (um item por linha)</label>
+              <div class="preform-selector">
+                <select id="observacoesPreform" onchange="insertPreform('observacoes', this.value)">
+                  <option value="">Selecionar pre-form...</option>
+                </select>
+              </div>
+              <textarea id="observacoes" name="observacoes" data-i18n="observationsPlaceholder" placeholder="Ex: Sinal de 50% para iniciar..."></textarea>
+            </div>
           </div>
           <div class="row-3">
-            <div><label for="contato_nome">Seu Nome</label><input id="contato_nome" name="contato_nome" type="text" value="Álvaro Pereira" required /></div>
-            <div><label for="contato_tel">Seu Telefone</label><input id="contato_tel" name="contato_tel" type="tel" value="11 96042-0895" required /></div>
-            <div><label for="contato_email">Seu E-mail</label><input id="contato_email" name="contato_email" type="email" value="alvaropereirasantos9@gmail.com" required /></div>
+            <div><label for="contato_nome" data-i18n="yourName">Seu Nome</label><input id="contato_nome" name="contato_nome" type="text" value="Álvaro Pereira" required /></div>
+            <div><label for="contato_tel" data-i18n="yourPhone">Seu Telefone</label><input id="contato_tel" name="contato_tel" type="tel" value="11 96042-0895" required /></div>
+            <div><label for="contato_email" data-i18n="yourEmail">Seu E-mail</label><input id="contato_email" name="contato_email" type="email" value="alvaropereirasantos9@gmail.com" required /></div>
           </div>
           <div class="row row-1">
-            <div><label for="contato_pix">Sua Chave PIX</label><input id="contato_pix" name="contato_pix" type="text" placeholder="CPF, CNPJ, e-mail, etc." value="11 96042-0895"/></div>
+            <div><label for="contato_pix" data-i18n="yourPix">Sua Chave PIX</label><input id="contato_pix" name="contato_pix" type="text" data-i18n="pixPlaceholder" placeholder="CPF, CNPJ, e-mail, etc." value="11 96042-0895"/></div>
           </div>
           <div class="actions">
-            <button type="button" class="btn secondary" id="resetBtn">Limpar Tudo</button>
-            <button type="submit" class="btn primary">Salvar e Gerar Orçamento</button>
+            <button type="button" class="btn secondary" id="resetBtn" data-i18n="clearAll">Limpar Tudo</button>
+            <button type="submit" class="btn primary" data-i18n="saveAndGenerate">Salvar e Gerar Orçamento</button>
           </div>
           <div id="orcMsg" class="message"></div>
         </form>
       </div>
       <div class="preview-section">
-        <h2>Preview do Orçamento</h2>
-        <pre id="orcPreviewContent">Preencha o formulário para ver o preview aqui.</pre>
+        <h2 data-i18n="quotePreview">Preview do Orçamento</h2>
+        <pre id="orcPreviewContent" data-i18n="previewPlaceholder">Preencha o formulário para ver o preview aqui.</pre>
       </div>
     </div>
 
     <div class="tab-content" id="recibos">
       <div class="form-section">
-        <h2>Gerar Recibo</h2>
-        <input type="text" id="searchOrc" placeholder="🔎 Buscar por cliente, endereço ou ID..." />
+        <h2 data-i18n="generateReceipt">Gerar Recibo</h2>
+        <input type="text" id="searchOrc" data-i18n="searchPlaceholder" placeholder="🔎 Buscar por cliente, endereço ou ID..." />
         <div class="orc-list" id="orcList"><p style="padding: 20px; text-align: center; color: var(--muted);">Carregando orçamentos...</p></div>
         <div class="actions">
-            <button type="button" class="btn primary" id="gerarReciboBtn" disabled>Salvar e Gerar Recibo</button>
+            <button type="button" class="btn primary" id="gerarReciboBtn" data-i18n="saveAndGenerateReceipt" disabled>Salvar e Gerar Recibo</button>
         </div>
         <div id="reciboMsg" class="message"></div>
       </div>
       <div class="preview-section">
-        <h2>Editar e Preview do Recibo</h2>
+        <h2 data-i18n="editAndPreview">Editar e Preview do Recibo</h2>
         <div id="reciboEditor" style="display: none;">
           <div class="row">
             <div><label for="recibo_cliente">Cliente</label><input id="recibo_cliente" type="text" /></div>
@@ -134,7 +231,164 @@
         <pre id="reciboPreviewContent">Selecione um orçamento da lista para gerar o recibo.</pre>
       </div>
     </div>
+
+    <div class="tab-content" id="config">
+      <div class="form-section">
+        <h2 data-i18n="settings">Configurações</h2>
+        
+        <div class="config-group">
+          <div class="config-header" onclick="toggleConfigGroup('language')">
+            <h3 data-i18n="language">Idioma</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="config-content" id="language-content">
+            <div class="row">
+              <div>
+                <label for="languageSelect" data-i18n="language">Idioma</label>
+                <select id="languageSelect">
+                  <option value="ptbr" data-i18n="portuguese">Português</option>
+                  <option value="en" data-i18n="english">English</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="config-group">
+          <div class="config-header" onclick="toggleConfigGroup('preforms')">
+            <h3 data-i18n="preforms">Pre-forms</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="config-content" id="preforms-content">
+            <div class="row">
+              <div>
+                <label for="preformType" data-i18n="type">Tipo</label>
+                <select id="preformType">
+                  <option value="servicos" data-i18n="detailedServicesOption">Serviços Detalhados</option>
+                  <option value="observacoes" data-i18n="observationsOption">Observações/Condições</option>
+                </select>
+              </div>
+              <div>
+                <label for="preformText" data-i18n="text">Texto</label>
+                <input id="preformText" type="text" data-i18n="preformPlaceholder" placeholder="Digite o texto do pre-form" />
+              </div>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn secondary" id="addPreformBtn" data-i18n="addPreform">Adicionar Pre-form</button>
+            </div>
+            <div id="preformsList"></div>
+          </div>
+        </div>
+        
+        <div class="config-group">
+          <div class="config-header" onclick="toggleConfigGroup('appearance')">
+            <h3 data-i18n="appearance">Aparência</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="config-content" id="appearance-content">
+            <div class="row">
+              <div>
+                <label for="themeSelect" data-i18n="theme">Tema</label>
+                <select id="themeSelect">
+                  <option value="light" data-i18n="light">Claro</option>
+                  <option value="intermediate" data-i18n="intermediate">Intermediário</option>
+                  <option value="dark" data-i18n="dark">Escuro</option>
+                </select>
+              </div>
+              <div>
+                <label for="colorPalette" data-i18n="colorPalette">Paleta de Cores</label>
+                <select id="colorPalette">
+                  <option value="default" data-i18n="default">Padrão</option>
+                  <option value="blue" data-i18n="blue">Azul</option>
+                  <option value="green" data-i18n="green">Verde</option>
+                  <option value="purple" data-i18n="purple">Roxo</option>
+                  <option value="orange" data-i18n="orange">Laranja</option>
+                  <option value="red" data-i18n="red">Vermelho</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="fontSize" data-i18n="fontSize">Tamanho da Fonte (px)</label>
+                <input id="fontSize" type="number" min="12" max="20" value="14" />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="config-group">
+          <div class="config-header" onclick="toggleConfigGroup('personal')">
+            <h3 data-i18n="personalData">Dados Pessoais</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="config-content" id="personal-content">
+            <div class="row">
+              <div>
+                <label for="userNome" data-i18n="yourName">Seu Nome</label>
+                <input id="userNome" type="text" data-i18n="fullName" placeholder="Nome completo" />
+              </div>
+              <div>
+                <label for="userTelefone" data-i18n="yourPhone">Seu Telefone</label>
+                <input id="userTelefone" type="tel" data-i18n="phoneNumber" placeholder="11 99999-9999" />
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="userEmail" data-i18n="yourEmail">Seu E-mail</label>
+                <input id="userEmail" type="email" data-i18n="emailAddress" placeholder="email@exemplo.com" />
+              </div>
+              <div>
+                <label for="userPix" data-i18n="yourPix">Sua Chave PIX</label>
+                <input id="userPix" type="text" data-i18n="pixPlaceholder" placeholder="CPF, CNPJ, e-mail, etc." />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="actions">
+          <button type="button" class="btn primary" id="saveConfigBtn" data-i18n="saveSettings">Salvar Configurações</button>
+        </div>
+        <div id="configMsg" class="message"></div>
+      </div>
+      
+      <div class="preview-section">
+        <h2 data-i18n="configPreview">Preview das Configurações</h2>
+        <div id="configPreview">
+          <h3 data-i18n="savedPreforms">Pre-forms Salvos</h3>
+          <div id="preformsPreview"></div>
+          
+          <h3 data-i18n="appearanceSettings">Configurações de Aparência</h3>
+          <div id="appearancePreview"></div>
+          
+          <h3 data-i18n="personalDataSettings">Dados Pessoais</h3>
+          <div id="userInfoPreview"></div>
+        </div>
+      </div>
+    </div>
+    
+    <footer class="footer">
+      <p>AutodocHub - <a href="https://github.com/AlvaroPereir4/AutoDocHub" target="_blank" rel="noopener">GitHub Repository</a></p>
+    </footer>
   </div>
+  <script src="../static/translations.js"></script>
   <script src="../static/script.js" defer></script>
+  <script>
+    // Aplicar configurações salvas ao carregar
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/config');
+        const config = await res.json();
+        applyConfig(config);
+      } catch (e) {
+        console.log('Usando configurações padrão');
+      }
+    });
+    
+    function applyConfig(config) {
+      document.documentElement.setAttribute('data-theme', config.theme || 'light');
+      document.documentElement.setAttribute('data-palette', config.colorPalette || 'default');
+      document.body.style.fontSize = (config.fontSize || 14) + 'px';
+    }
+  </script>
 </body>
 </html>
