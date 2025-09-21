@@ -1,10 +1,10 @@
-# AutodocHub 📝
+# AutodocHub
 
 Professional automated quote and receipt generation system with advanced PDF export functionality and comprehensive configuration management.
 
-## ✨ Features
+## Features
 
-### 📋 Core Functionality
+### Core Functionality
 - **Quote Management**: Create, preview, and generate professional PDF quotes
 - **Receipt Generation**: Convert quotes to receipts with editable fields
 - **Real-time Preview**: Live preview updates as you edit
@@ -12,7 +12,7 @@ Professional automated quote and receipt generation system with advanced PDF exp
 - **Data Persistence**: MongoDB integration for quote/receipt storage
 - **Search & Filter**: Find quotes by client, address, or ID
 
-### ⚙️ Advanced Configuration System
+### Advanced Configuration System
 - **Pre-forms Management**: Create reusable text templates for services and observations
 - **Theme System**: Light, intermediate, and dark themes with smooth transitions
 - **Color Palettes**: Multiple color schemes (Default, Blue, Green, Purple, Orange, Red)
@@ -20,17 +20,17 @@ Professional automated quote and receipt generation system with advanced PDF exp
 - **Personal Data Management**: Configurable user information (name, phone, email, PIX)
 - **Collapsible Settings**: Organized configuration groups for better UX
 
-### 🌐 Internationalization
+### Internationalization
 - **Multi-language Support**: Portuguese and English interface
 - **Dynamic Translation**: Real-time language switching
 - **Persistent Language**: Saves language preference in database
 
-### 🛡️ Security & Reliability
+### Security & Reliability
 - **File Name Sanitization**: Automatic cleanup of special characters in generated files
 - **Data Validation**: Comprehensive input validation and error handling
 - **Safe PDF Generation**: Prevents file system issues with invalid characters
 
-## 🚀 Tech Stack
+## Tech Stack
 
 - **Backend**: Flask (Python) with RESTful API
 - **Database**: MongoDB with structured collections
@@ -39,7 +39,7 @@ Professional automated quote and receipt generation system with advanced PDF exp
 - **Internationalization**: Custom translation system
 - **Configuration**: Persistent settings with real-time application
 
-## 📦 Installation
+## Installation
 
 1. **Clone the repository**
    ```bash
@@ -64,7 +64,7 @@ Professional automated quote and receipt generation system with advanced PDF exp
 5. **Access the application**
    - Open your browser and go to `http://localhost:5000`
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -87,7 +87,7 @@ src/
     └── receiptStyle.py      # PDF receipt styling
 ```
 
-## 🗄️ Database Structure
+## Database Structure
 
 The application uses MongoDB with the database `autodochub_db` containing three main collections:
 
@@ -122,7 +122,7 @@ The application uses MongoDB with the database `autodochub_db` containing three 
   - PDF file locations
   - Creation timestamps
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Core Operations
 - `GET /` - Main application interface
@@ -134,7 +134,7 @@ The application uses MongoDB with the database `autodochub_db` containing three 
 - `GET /api/config` - Get current configuration
 - `POST /api/config` - Save configuration settings
 
-## 🎨 Configuration Options
+## Configuration Options
 
 ### Themes
 - **Light**: Clean white background with dark text
@@ -154,21 +154,13 @@ The application uses MongoDB with the database `autodochub_db` containing three 
 - **Observations**: Standard terms and conditions
 - **Flexible Integration**: Insert and edit as needed
 
-## 🌍 Language Support
+## Language Support
 
 - **Portuguese (pt-BR)**: Complete interface translation
 - **English (en)**: Full English interface
 - **Dynamic Switching**: Change language without restart
 - **Persistent Settings**: Language preference saved automatically
 
-## 📄 Documentation
+## Documentation
 
 [Detailed Documentation](https://www.notion.so/AutodocHub-23a0166bb9f6803195d5f5eb44f851b7?source=copy_link)
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
