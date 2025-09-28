@@ -68,7 +68,11 @@ def quouteStyle(data: dict):
     elements.append(Spacer(1, 8))
     elements.append(Paragraph(data["titulo"], title_style))
     elements.append(Paragraph(data["endereco"], normal_text))
-    elements.append(Paragraph(f"Aos cuidados do(a) Sr(a).: {data['cliente']}", normal_text))
+    
+    # Only show client info if client name is provided
+    if data.get('cliente') and data['cliente'].strip():
+        elements.append(Paragraph(f"Aos cuidados do(a) Sr(a).: {data['cliente']}", normal_text))
+    
     elements.append(Spacer(1, 15))
 
     # === Serviços ===

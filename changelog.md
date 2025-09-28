@@ -1,8 +1,11 @@
-    - Fix: File name sanitization and format validation
-    - Feature: Added config collection to save application user settings
-    - Feature: Added comprehensive README.md with detailed information
-    - Feature: Added receipt generation functionality with general improvements
-    - Feature: Implemented internationalization system (Portuguese/English)
-    - Feature: Added theme system with multiple color palettes
-    - Feature: Added pre-forms management for reusable text templates
-    - Feature: Added collapsible configuration groups for better UX
+    - Feature: Client name flexible adjustment.
+    - Feature: Permant camps of form.
+    - Feature: Added file path to save in configs.
+    - Fix: File name sanitization and format validation.
+    - Feature: Added config collection to save application user settings.
+    - Feature: Added comprehensive README.md with detailed information.
+    - Feature: Added receipt generation functionality with general improvements.
+    - Feature: Implemented internationalization system (Portuguese/English).
+    - Feature: Added theme system with multiple color palettes.
+    - Feature: Added pre-forms management for reusable text templates.
+    - Feature: Added collapsible configuration groups for better UX.

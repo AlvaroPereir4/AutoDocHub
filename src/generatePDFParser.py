@@ -1,4 +1,5 @@
 from src.utils.imports import *
+from src.utils.config_utils import get_save_paths
 
 def parser(data: dict) -> (dict, str):
     service = Service(service_type="Rejunte", service=data.get("servico"))
@@ -18,13 +19,15 @@ def parser(data: dict) -> (dict, str):
 
 def file_adjustments(quot: Quote) -> str:
     ano, mes, _ = quot.quote_date.split('-')
-    output_dir = r'D:\general_data\orcamentos'
+    save_paths = get_save_paths()
+    output_dir = save_paths.get('orcamentos', r'D:\general_data\orcamentos')
     target_dir = os.path.join(output_dir, ano, mes)
 
     if not os.path.exists(target_dir):
         os.makedirs(target_dir)
 
-    filename = f"orc_{quot.client}_{quot.quote_date}.pdf"
+    client_name = quot.client if quot.client and quot.client.strip() else 'cliente'
+    filename = f"orc_{client_name}_{quot.quote_date}.pdf"
     file_path = os.path.join(target_dir, filename)
     return file_path
 

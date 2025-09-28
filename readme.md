@@ -11,6 +11,7 @@ Professional automated quote and receipt generation system with advanced PDF exp
 - **PDF Export**: Professional PDF generation with consistent styling
 - **Data Persistence**: MongoDB integration for quote/receipt storage
 - **Search & Filter**: Find quotes by client, address, or ID
+- **Flexible Client Info**: Optional client names with automatic PDF layout adaptation
 
 ### Advanced Configuration System
 - **Pre-forms Management**: Create reusable text templates for services and observations
@@ -19,6 +20,8 @@ Professional automated quote and receipt generation system with advanced PDF exp
 - **Typography Control**: Adjustable font sizes (12-20px)
 - **Personal Data Management**: Configurable user information (name, phone, email, PIX)
 - **Collapsible Settings**: Organized configuration groups for better UX
+- **Custom Save Paths**: Configurable directories for quotes and receipts storage
+- **Protected Contact Fields**: Read-only contact information sourced from database
 
 ### Internationalization
 - **Multi-language Support**: Portuguese and English interface
@@ -29,6 +32,8 @@ Professional automated quote and receipt generation system with advanced PDF exp
 - **File Name Sanitization**: Automatic cleanup of special characters in generated files
 - **Data Validation**: Comprehensive input validation and error handling
 - **Safe PDF Generation**: Prevents file system issues with invalid characters
+- **Circular Import Prevention**: Modular architecture preventing dependency conflicts
+- **Flexible Data Handling**: Graceful handling of missing or empty client information
 
 ## Tech Stack
 
@@ -102,6 +107,7 @@ The application uses MongoDB with the database `autodochub_db` containing three 
   - Language preferences (pt-BR/en)
   - User personal data (name, phone, email, PIX)
   - Pre-forms for services and observations
+  - Custom save paths for PDF storage
 
 #### `quote_docs`
 - **Purpose**: Stores all generated quotes
@@ -154,6 +160,12 @@ The application uses MongoDB with the database `autodochub_db` containing three 
 - **Observations**: Standard terms and conditions
 - **Flexible Integration**: Insert and edit as needed
 
+### Save Paths
+- **Quotes Directory**: Configurable path for quote PDF storage
+- **Receipts Directory**: Configurable path for receipt PDF storage
+- **Automatic Organization**: Files organized by year/month structure
+- **Fallback Protection**: Default paths if configuration missing
+
 ## Language Support
 
 - **Portuguese (pt-BR)**: Complete interface translation
@@ -164,3 +176,20 @@ The application uses MongoDB with the database `autodochub_db` containing three 
 ## Documentation
 
 [Detailed Documentation](https://www.notion.so/AutodocHub-23a0166bb9f6803195d5f5eb44f851b7?source=copy_link)
+
+## Recent Updates
+
+- **Flexible Client Management**: Optional client names with smart PDF layout
+- **Custom Storage Paths**: User-configurable directories for PDF files
+- **Protected Contact Fields**: Read-only contact information from settings
+- **Enhanced Form Reset**: Preserves contact data while clearing form fields
+- **Improved File Naming**: Intelligent fallbacks for missing client information
+- **Modular Architecture**: Resolved circular imports with utility modules
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).

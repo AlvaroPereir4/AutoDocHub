@@ -16,11 +16,8 @@ try:
     orcamentos_collection = db.quote_docs
     recibos_collection = db.receipt_docs
     config_collection = db.config
-    print("✅ Conectado ao MongoDB com sucesso!")
-    print(f"📊 Database: {DB_NAME}")
-    print(f"📁 Collections: quote_docs, receipt_docs, config")
 except Exception as e:
-    print(f"❌ Erro ao conectar ao MongoDB: {e}")
+    print(f"connect error to MongoDB: {e}")
     exit()
 
 @app.route('/')
@@ -41,7 +38,7 @@ def salvar_orcamento():
             "success": True, 
             "id": str(result.inserted_id),
             "pdf_path": data['pdf_location'],
-            "cliente": data['cliente']
+            "cliente": data.get('cliente', '').strip() or 'Cliente não informado'
         }), 201
 
     except Exception as e:
@@ -63,11 +60,9 @@ def buscar_orcamentos():
 def salvar_recibo():
     data = request.json
     data['criado_em'] = datetime.now()
-    # Sanitize client name for file
     data['cliente_sanitized'] = sanitize_filename(data.get('cliente', 'cliente'))
     
     try:
-        # Generate receipt PDF
         pdf_path = generate_receipt_pdf(data)
         data['pdf_location'] = pdf_path
         
@@ -76,7 +71,7 @@ def salvar_recibo():
             "success": True, 
             "id": str(result.inserted_id), 
             "pdf_path": pdf_path,
-            "cliente": data['cliente']
+            "cliente": data.get('cliente', '').strip() or 'Cliente não informado'
         }), 201
     except Exception as e:
         print(f"Erro ao salvar recibo: {e}")
@@ -102,19 +97,15 @@ def save_config():
     data = request.json
     
     try:
-        # Validar dados usando a classe Config
         config_obj = Config.from_dict(data)
         validation_errors = config_obj.validate()
         
         if validation_errors:
             return jsonify({"error": "Dados inválidos: " + ", ".join(validation_errors)}), 400
-        
-        # Adicionar timestamp
+
         data['updated_at'] = datetime.now()
-        
         print(f"💾 Salvando configurações: {data}")
-        
-        # Remove config anterior e salva nova
+
         deleted_count = config_collection.delete_many({})
         print(f"🗑️ Removidas {deleted_count.deleted_count} configurações antigas")
         
@@ -128,16 +119,13 @@ def save_config():
         return jsonify({"error": str(e)}), 500
 
 def sanitize_filename(filename):
-    # Remove special characters and replace with underscore
+    if not filename or filename.strip() == '':
+        return 'cliente'
     filename = re.sub(r'[<>:"/\\|?*]', '_', filename)
-    # Remove extra spaces and replace with underscore
     filename = re.sub(r'\s+', '_', filename)
-    # Remove multiple underscores
     filename = re.sub(r'_+', '_', filename)
-    # Remove underscore at beginning and end
     filename = filename.strip('_')
-    # Limit size
-    return filename[:50] if filename else 'documento'
+    return filename[:50] if filename else 'cliente'
 
 def get_default_config():
     return Config.get_default().to_dict()

@@ -140,7 +140,7 @@
         <form id="orcForm">
           <div class="row row-1"><input id="titulo" name="titulo" type="hidden" value="ORÇAMENTO" /></div>
           <div class="row">
-            <div><label for="cliente" data-i18n="client">Cliente</label><input id="cliente" name="cliente" type="text" data-i18n="clientPlaceholder" placeholder="Nome do cliente" required /></div>
+            <div><label for="cliente" data-i18n="client">Cliente</label><input id="cliente" name="cliente" type="text" data-i18n="clientPlaceholder" placeholder="Nome do cliente" /></div>
             <div><label for="endereco" data-i18n="address">Endereço / Local</label><input id="endereco" name="endereco" type="text" data-i18n="addressPlaceholder" placeholder="Rua, número, cidade/UF" required /></div>
           </div>
           <div class="row row-1">
@@ -175,12 +175,12 @@
             </div>
           </div>
           <div class="row-3">
-            <div><label for="contato_nome" data-i18n="yourName">Seu Nome</label><input id="contato_nome" name="contato_nome" type="text" required /></div>
-            <div><label for="contato_tel" data-i18n="yourPhone">Seu Telefone</label><input id="contato_tel" name="contato_tel" type="tel" required /></div>
-            <div><label for="contato_email" data-i18n="yourEmail">Seu E-mail</label><input id="contato_email" name="contato_email" type="email" required /></div>
+            <div><label for="contato_nome" data-i18n="yourName">Seu Nome</label><input id="contato_nome" name="contato_nome" type="text" readonly style="background-color: var(--accent-light);" required /></div>
+            <div><label for="contato_tel" data-i18n="yourPhone">Seu Telefone</label><input id="contato_tel" name="contato_tel" type="tel" readonly style="background-color: var(--accent-light);" required /></div>
+            <div><label for="contato_email" data-i18n="yourEmail">Seu E-mail</label><input id="contato_email" name="contato_email" type="email" readonly style="background-color: var(--accent-light);" required /></div>
           </div>
           <div class="row row-1">
-            <div><label for="contato_pix" data-i18n="yourPix">Sua Chave PIX</label><input id="contato_pix" name="contato_pix" type="text" data-i18n="pixPlaceholder" placeholder="CPF, CNPJ, e-mail, etc."/></div>
+            <div><label for="contato_pix" data-i18n="yourPix">Sua Chave PIX</label><input id="contato_pix" name="contato_pix" type="text" readonly style="background-color: var(--accent-light);" data-i18n="pixPlaceholder" placeholder="CPF, CNPJ, e-mail, etc."/></div>
           </div>
           <div class="actions">
             <button type="button" class="btn secondary" id="resetBtn" data-i18n="clearAll">Limpar Tudo</button>
@@ -340,6 +340,25 @@
               <div>
                 <label for="userPix" data-i18n="yourPix">Sua Chave PIX</label>
                 <input id="userPix" type="text" data-i18n="pixPlaceholder" placeholder="CPF, CNPJ, e-mail, etc." />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="config-group">
+          <div class="config-header" onclick="toggleConfigGroup('paths')">
+            <h3>Caminhos de Salvamento</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="config-content" id="paths-content">
+            <div class="row">
+              <div>
+                <label for="pathOrcamentos">Pasta dos Orçamentos</label>
+                <input id="pathOrcamentos" type="text" placeholder="D:\pasta\orcamentos" />
+              </div>
+              <div>
+                <label for="pathRecibos">Pasta dos Recibos</label>
+                <input id="pathRecibos" type="text" placeholder="D:\pasta\recibos" />
               </div>
             </div>
           </div>

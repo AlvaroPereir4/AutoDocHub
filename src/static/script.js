@@ -9,7 +9,8 @@ let currentConfig = {
   fontSize: '14',
   preforms: { servicos: [], observacoes: [] },
   userInfo: { nome: '', telefone: '', email: '', pix: '' },
-  language: 'ptbr'
+  language: 'ptbr',
+  savePaths: { orcamentos: '', recibos: '' }
 };
 
 // --- Utility Functions ---
@@ -56,7 +57,7 @@ function updateSaldo() {
 function updateOrcamentoPreview() {
   const data = {
     titulo: v('titulo').value || "ORÇAMENTO",
-    cliente: v('cliente').value || "[Nome do Cliente]",
+    cliente: v('cliente').value.trim() || "[Cliente não informado]",
     endereco: v('endereco').value || "[Endereço da Obra]",
     servicos: parseLines(v('servico').value),
     observacoes: parseLines(v('observacoes').value),
@@ -148,7 +149,23 @@ async function saveOrcamento(e) {
     if (!res.ok) throw new Error(data.error || 'Falha ao salvar o orçamento.');
     
     showMessage(msgDiv, `✅ ${t('quoteSavedSuccess')}<br><strong>${t('client')}:</strong> ${data.cliente}<br><strong>PDF:</strong> ${data.pdf_path}`, 'success');
+    
+    // Save contact info before reset
+    const contactInfo = {
+      nome: v('contato_nome').value,
+      tel: v('contato_tel').value,
+      email: v('contato_email').value,
+      pix: v('contato_pix').value
+    };
+    
     orcForm.reset();
+    
+    // Restore contact info after reset
+    v('contato_nome').value = contactInfo.nome;
+    v('contato_tel').value = contactInfo.tel;
+    v('contato_email').value = contactInfo.email;
+    v('contato_pix').value = contactInfo.pix;
+    
     updateSaldo();
     updateOrcamentoPreview();
 
@@ -164,7 +181,22 @@ orcForm.addEventListener('input', () => {
 });
 orcForm.addEventListener('submit', saveOrcamento);
 v('resetBtn').addEventListener('click', () => {
+    // Save contact info before reset
+    const contactInfo = {
+      nome: v('contato_nome').value,
+      tel: v('contato_tel').value,
+      email: v('contato_email').value,
+      pix: v('contato_pix').value
+    };
+    
     orcForm.reset();
+    
+    // Restore contact info after reset
+    v('contato_nome').value = contactInfo.nome;
+    v('contato_tel').value = contactInfo.tel;
+    v('contato_email').value = contactInfo.email;
+    v('contato_pix').value = contactInfo.pix;
+    
     updateSaldo();
     updateOrcamentoPreview();
     v('orcMsg').style.display = 'none';
@@ -381,6 +413,10 @@ function populateConfigForm() {
   v('userEmail').value = userInfo.email || '';
   v('userPix').value = userInfo.pix || '';
   
+  const savePaths = currentConfig.savePaths || {};
+  v('pathOrcamentos').value = savePaths.orcamentos || '';
+  v('pathRecibos').value = savePaths.recibos || '';
+  
   renderPreformsList();
   updateUserFormFields();
 }
@@ -514,6 +550,10 @@ async function saveConfig() {
     telefone: v('userTelefone').value,
     email: v('userEmail').value,
     pix: v('userPix').value
+  };
+  currentConfig.savePaths = {
+    orcamentos: v('pathOrcamentos').value,
+    recibos: v('pathRecibos').value
   };
   
   console.log('Salvando configurações:', currentConfig);

@@ -2,13 +2,14 @@ class Config:
     VALID_THEMES = ["light", "intermediate", "dark"]
     VALID_PALETTES = ["default", "blue", "green", "purple", "orange", "red"]
     
-    def __init__(self, theme="light", color_palette="default", font_size="14", preforms=None, user_info=None, language="ptbr"):
+    def __init__(self, theme="light", color_palette="default", font_size="14", preforms=None, user_info=None, language="ptbr", save_paths=None):
         self.theme = theme if theme in self.VALID_THEMES else "light"
         self.color_palette = color_palette if color_palette in self.VALID_PALETTES else "default"
         self.font_size = str(font_size)
         self.preforms = preforms or {"servicos": [], "observacoes": []}
         self.user_info = user_info or {"nome": "", "telefone": "", "email": "", "pix": ""}
         self.language = language if language in ["ptbr", "en"] else "ptbr"
+        self.save_paths = save_paths or {"orcamentos": r"D:\general_data\orcamentos", "recibos": r"D:\general_data\recibos"}
     
     def to_dict(self):
         return {
@@ -18,6 +19,7 @@ class Config:
             "preforms": self.preforms,
             "userInfo": self.user_info,
             "language": self.language,
+            "savePaths": self.save_paths,
             "validThemes": self.VALID_THEMES,
             "validPalettes": self.VALID_PALETTES
         }
@@ -30,7 +32,8 @@ class Config:
             font_size=data.get("fontSize", "14"),
             preforms=data.get("preforms", {"servicos": [], "observacoes": []}),
             user_info=data.get("userInfo", {"nome": "", "telefone": "", "email": "", "pix": ""}),
-            language=data.get("language", "ptbr")
+            language=data.get("language", "ptbr"),
+            save_paths=data.get("savePaths", {"orcamentos": r"D:\general_data\orcamentos", "recibos": r"D:\general_data\recibos"})
         )
     
     def validate(self):
@@ -82,7 +85,11 @@ class Config:
                 "email": "",
                 "pix": ""
             },
-            language="ptbr"
+            language="ptbr",
+            save_paths={
+                "orcamentos": r"D:\general_data\orcamentos",
+                "recibos": r"D:\general_data\recibos"
+            }
         )
     
     def add_preform(self, category, text):
