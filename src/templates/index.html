@@ -29,18 +29,30 @@
     .btn:hover { opacity: 0.85; }
     .btn.primary { background: var(--accent); color: #fff; }
     .btn.secondary { background: var(--accent-light); color: var(--text); border: 1px solid var(--line); }
+    .btn.warning { background: #ff9800; color: #fff; }
     .message { padding: 12px; border-radius: 8px; margin-top: 15px; display: none; }
     .success { background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success-text); }
     .error { background: var(--error-bg); border: 1px solid var(--error-border); color: var(--error-text); }
     .money-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; align-items: end; margin-bottom: 15px; }
     .saldo { padding: 10px; border: 1px dashed var(--line); border-radius: 8px; background: var(--accent-light); text-align: center; font-weight: bold; font-size: 16px; }
+    .doc-list { max-height: 400px; overflow-y: auto; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 8px; }
+    .doc-item { padding: 10px 12px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background-color .2s; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+    .doc-item:last-child { border-bottom: none; }
+    .doc-item:hover { background-color: var(--accent-light); }
+    .doc-item.selected { background-color: var(--accent); color: #fff; }
+    .doc-item.selected .btn { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.4); }
+    .doc-item-info { flex: 1; }
+    .doc-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .btn-edit { cursor: pointer; border: 1px solid var(--line); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; background: var(--accent-light); color: var(--text); transition: opacity .2s; }
+    .btn-edit:hover { opacity: 0.8; }
     .orc-list { max-height: 400px; overflow-y: auto; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 8px; }
     .orc-item { padding: 12px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background-color .2s; font-size: 13px; }
     .orc-item:last-child { border-bottom: none; }
     .orc-item:hover { background-color: var(--accent-light); }
     .orc-item.selected { background-color: var(--accent); color: #fff; }
-    #searchOrc { margin-bottom: 10px; }
-    pre { white-space: pre-wrap; word-wrap: break-word; font-family: 'Courier New', Courier, monospace; font-size: inherit; line-height: 1.6; color: var(--text); background: var(--card); padding: 15px; border-radius: 8px; border: 1px solid var(--line); }    #reciboEditor { margin-bottom: 20px; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--accent-light); }
+    #searchOrc, #searchCobranca { margin-bottom: 10px; }
+    pre { white-space: pre-wrap; word-wrap: break-word; font-family: 'Courier New', Courier, monospace; font-size: inherit; line-height: 1.6; color: var(--text); background: var(--card); padding: 15px; border-radius: 8px; border: 1px solid var(--line); }
+    #reciboEditor { margin-bottom: 20px; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--accent-light); }
     #reciboEditor h3 { margin-bottom: 15px; color: var(--muted); font-size: 16px; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .preform-item { padding: 8px; margin: 5px 0; border: 1px solid var(--line); border-radius: 6px; background: var(--accent-light); display: flex; justify-content: space-between; align-items: center; }
@@ -59,50 +71,51 @@
     .toggle-icon { transition: transform 0.3s; }
     .config-group .toggle-icon { transform: rotate(-90deg); }
     .config-group .toggle-icon.open { transform: rotate(0deg); }
-    
+    .edit-mode-banner { background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 10px 15px; margin-bottom: 15px; font-size: 13px; color: #856404; display: none; }
+    .edit-mode-banner.active { display: block; }
+
     /* Temas */
-    [data-theme="dark"] { 
-      --bg: #121212; 
-      --card: #1e1e1e; 
-      --text: #ffffff; 
-      --muted: #b0b0b0; 
-      --line: #333333; 
-      --accent: #bb86fc; 
+    [data-theme="dark"] {
+      --bg: #121212;
+      --card: #1e1e1e;
+      --text: #ffffff;
+      --muted: #b0b0b0;
+      --line: #333333;
+      --accent: #bb86fc;
       --accent-light: #2a2a2a;
-      --success-bg: #1b5e20; 
-      --success-border: #2e7d32; 
+      --success-bg: #1b5e20;
+      --success-border: #2e7d32;
       --success-text: #4caf50;
-      --error-bg: #b71c1c; 
-      --error-border: #c62828; 
+      --error-bg: #b71c1c;
+      --error-border: #c62828;
       --error-text: #f44336;
     }
-    [data-theme="intermediate"] { 
-      --bg: #f5f5f5; 
-      --card: #fafafa; 
-      --text: #212121; 
-      --muted: #757575; 
-      --line: #e0e0e0; 
-      --accent: #1976d2; 
+    [data-theme="intermediate"] {
+      --bg: #f5f5f5;
+      --card: #fafafa;
+      --text: #212121;
+      --muted: #757575;
+      --line: #e0e0e0;
+      --accent: #1976d2;
       --accent-light: #f3f4f6;
     }
-    
+
     /* Paletas */
     [data-palette="blue"] { --accent: #2196f3; --accent-light: #e3f2fd; }
     [data-palette="green"] { --accent: #4caf50; --accent-light: #e8f5e9; }
     [data-palette="purple"] { --accent: #9c27b0; --accent-light: #f3e5f5; }
     [data-palette="orange"] { --accent: #ff9800; --accent-light: #fff3e0; }
     [data-palette="red"] { --accent: #f44336; --accent-light: #ffebee; }
-    
-    /* Ajustes para tema escuro */
-    [data-theme="dark"] input, 
-    [data-theme="dark"] textarea, 
+
+    [data-theme="dark"] input,
+    [data-theme="dark"] textarea,
     [data-theme="dark"] select {
       background: #2a2a2a;
       color: #ffffff;
       border-color: #404040;
     }
-    [data-theme="dark"] input:focus, 
-    [data-theme="dark"] textarea:focus, 
+    [data-theme="dark"] input:focus,
+    [data-theme="dark"] textarea:focus,
     [data-theme="dark"] select:focus {
       border-color: var(--accent);
     }
@@ -110,16 +123,19 @@
       background: #3a3a3a;
       border-color: #404040;
     }
-    
-    /* Ajustes para tema intermediário */
-    [data-theme="intermediate"] input, 
-    [data-theme="intermediate"] textarea, 
+    [data-theme="dark"] .edit-mode-banner {
+      background: #3a2e00;
+      border-color: #ffc107;
+      color: #ffc107;
+    }
+
+    [data-theme="intermediate"] input,
+    [data-theme="intermediate"] textarea,
     [data-theme="intermediate"] select {
       background: #ffffff;
       color: #333333;
     }
-    
-    /* Rodapé */
+
     .footer { text-align: center; padding: 20px; margin-top: 30px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
     .footer a { color: var(--accent); text-decoration: none; }
     .footer a:hover { text-decoration: underline; }
@@ -131,14 +147,29 @@
     <div class="tabs">
       <div class="tab active" data-tab="orcamentos" data-i18n="quotes">Orçamentos</div>
       <div class="tab" data-tab="recibos" data-i18n="receipts">Recibos</div>
+      <div class="tab" data-tab="cobrancas" data-i18n="visitCharges">Cobranças de Visita</div>
       <div class="tab" data-tab="config" data-i18n="config">Config</div>
     </div>
 
+    <!-- ==================== ORÇAMENTOS ==================== -->
     <div class="tab-content active" id="orcamentos">
       <div class="form-section">
+        <div class="edit-mode-banner" id="orcEditBanner">✏️ Modo edição — editando orçamento existente</div>
         <h2 data-i18n="createQuote">Criar Orçamento</h2>
+
+        <div class="config-group" style="margin-bottom:15px">
+          <div class="config-header" onclick="toggleSavedDocs('orcSaved')">
+            <span data-i18n="savedQuotes" style="font-weight:600">Orçamentos Salvos</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="config-content" id="orcSaved-content">
+            <input type="text" id="searchOrcForm" data-i18n="searchPlaceholder" placeholder="🔎 Buscar..." style="margin-bottom:8px"/>
+            <div class="doc-list" id="orcSavedList"><p style="padding:12px;color:var(--muted);text-align:center">Carregando...</p></div>
+          </div>
+        </div>
+
         <form id="orcForm">
-          <div class="row row-1"><input id="titulo" name="titulo" type="hidden" value="ORÇAMENTO" /></div>
+          <input id="titulo" name="titulo" type="hidden" value="ORÇAMENTO" />
           <div class="row">
             <div><label for="cliente" data-i18n="client">Cliente</label><input id="cliente" name="cliente" type="text" data-i18n="clientPlaceholder" placeholder="Nome do cliente" /></div>
             <div><label for="endereco" data-i18n="address">Endereço / Local</label><input id="endereco" name="endereco" type="text" data-i18n="addressPlaceholder" placeholder="Rua, número, cidade/UF" required /></div>
@@ -183,8 +214,9 @@
             <div><label for="contato_pix" data-i18n="yourPix">Sua Chave PIX</label><input id="contato_pix" name="contato_pix" type="text" readonly style="background-color: var(--accent-light);" data-i18n="pixPlaceholder" placeholder="CPF, CNPJ, e-mail, etc."/></div>
           </div>
           <div class="actions">
+            <button type="button" class="btn secondary" id="orcCancelEditBtn" style="display:none" data-i18n="cancelEdit">Cancelar Edição</button>
             <button type="button" class="btn secondary" id="resetBtn" data-i18n="clearAll">Limpar Tudo</button>
-            <button type="submit" class="btn primary" data-i18n="saveAndGenerate">Salvar e Gerar Orçamento</button>
+            <button type="submit" class="btn primary" id="orcSubmitBtn" data-i18n="saveAndGenerate">Salvar e Gerar Orçamento</button>
           </div>
           <div id="orcMsg" class="message"></div>
         </form>
@@ -195,6 +227,7 @@
       </div>
     </div>
 
+    <!-- ==================== RECIBOS ==================== -->
     <div class="tab-content" id="recibos">
       <div class="form-section">
         <h2 data-i18n="generateReceipt">Gerar Recibo</h2>
@@ -204,8 +237,21 @@
             <button type="button" class="btn primary" id="gerarReciboBtn" data-i18n="saveAndGenerateReceipt" disabled>Salvar e Gerar Recibo</button>
         </div>
         <div id="reciboMsg" class="message"></div>
+
+        <div style="margin-top:25px; border-top:1px solid var(--line); padding-top:20px;">
+          <div class="config-group">
+            <div class="config-header" onclick="toggleSavedDocs('reciboSaved')">
+              <span data-i18n="savedReceipts" style="font-weight:600">Recibos Salvos</span>
+              <span class="toggle-icon">▼</span>
+            </div>
+            <div class="config-content" id="reciboSaved-content">
+              <div class="doc-list" id="reciboSavedList"><p style="padding:12px;color:var(--muted);text-align:center">Carregando...</p></div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="preview-section">
+        <div class="edit-mode-banner" id="reciboEditBanner">✏️ Modo edição — editando recibo existente</div>
         <h2 data-i18n="editAndPreview">Editar e Preview do Recibo</h2>
         <div id="reciboEditor" style="display: none;">
           <div class="row">
@@ -227,15 +273,77 @@
             <div><label for="recibo_contato_nome">Nome do Prestador</label><input id="recibo_contato_nome" type="text" /></div>
             <div><label for="recibo_contato_pix">Chave PIX</label><input id="recibo_contato_pix" type="text" /></div>
           </div>
+          <div class="actions">
+            <button type="button" class="btn secondary" id="reciboCancelEditBtn" style="display:none" data-i18n="cancelEdit">Cancelar Edição</button>
+            <button type="button" class="btn primary" id="gerarReciboSaveBtn" data-i18n="saveAndGenerateReceipt">Salvar e Gerar Recibo</button>
+          </div>
         </div>
         <pre id="reciboPreviewContent">Selecione um orçamento da lista para gerar o recibo.</pre>
       </div>
     </div>
 
+    <!-- ==================== COBRANÇAS DE VISITA ==================== -->
+    <div class="tab-content" id="cobrancas">
+      <div class="form-section">
+        <div class="edit-mode-banner" id="cobrancaEditBanner">✏️ Modo edição — editando cobrança existente</div>
+        <h2 data-i18n="createVisitCharge">Criar Cobrança de Visita</h2>
+
+        <div class="config-group" style="margin-bottom:15px">
+          <div class="config-header" onclick="toggleSavedDocs('cobrancaSaved')">
+            <span data-i18n="savedCharges" style="font-weight:600">Cobranças Salvas</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="config-content" id="cobrancaSaved-content">
+            <input type="text" id="searchCobranca" data-i18n="searchPlaceholder" placeholder="🔎 Buscar..." style="margin-bottom:8px"/>
+            <div class="doc-list" id="cobrancaSavedList"><p style="padding:12px;color:var(--muted);text-align:center">Carregando...</p></div>
+          </div>
+        </div>
+
+        <form id="cobrancaForm">
+          <div class="row">
+            <div><label for="cob_cliente" data-i18n="client">Cliente</label><input id="cob_cliente" type="text" data-i18n="clientPlaceholder" placeholder="Nome do cliente" /></div>
+            <div><label for="cob_endereco" data-i18n="address">Endereço / Local</label><input id="cob_endereco" type="text" data-i18n="addressPlaceholder" placeholder="Rua, número, cidade/UF" required /></div>
+          </div>
+          <div class="row row-1">
+            <div>
+              <label for="cob_descricao" data-i18n="serviceDescription">Descrição do Serviço Realizado (um item por linha)</label>
+              <textarea id="cob_descricao" data-i18n="serviceDescPlaceholder" placeholder="Ex: Visita técnica para avaliação..." required></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div><label for="cob_valor" data-i18n="totalValue">Valor Total (R$)</label><input id="cob_valor" type="number" step="0.01" min="0" required /></div>
+            <div><label for="cob_data" data-i18n="issueDate">Data de Emissão</label><input id="cob_data" type="date" required /></div>
+          </div>
+          <div class="row row-1">
+            <div>
+              <label for="cob_obs" data-i18n="observations">Observações (opcional, um item por linha)</label>
+              <textarea id="cob_obs" data-i18n="observationsPlaceholder" placeholder="Ex: Pagamento via PIX..."></textarea>
+            </div>
+          </div>
+          <div class="row-3">
+            <div><label for="cob_contato_nome" data-i18n="yourName">Seu Nome</label><input id="cob_contato_nome" type="text" readonly style="background-color: var(--accent-light);" /></div>
+            <div><label for="cob_contato_tel" data-i18n="yourPhone">Seu Telefone</label><input id="cob_contato_tel" type="tel" readonly style="background-color: var(--accent-light);" /></div>
+            <div><label for="cob_contato_pix" data-i18n="yourPix">Sua Chave PIX</label><input id="cob_contato_pix" type="text" readonly style="background-color: var(--accent-light);" /></div>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn secondary" id="cobrancaCancelEditBtn" style="display:none" data-i18n="cancelEdit">Cancelar Edição</button>
+            <button type="button" class="btn secondary" id="resetCobrancaBtn" data-i18n="clearAll">Limpar Tudo</button>
+            <button type="submit" class="btn primary" id="cobrancaSubmitBtn" data-i18n="saveAndGenerateCharge">Salvar e Gerar Cobrança</button>
+          </div>
+          <div id="cobrancaMsg" class="message"></div>
+        </form>
+      </div>
+      <div class="preview-section">
+        <h2 data-i18n="chargePreview">Preview da Cobrança</h2>
+        <pre id="cobrancaPreviewContent" data-i18n="previewPlaceholder">Preencha o formulário para ver o preview aqui.</pre>
+      </div>
+    </div>
+
+    <!-- ==================== CONFIG ==================== -->
     <div class="tab-content" id="config">
       <div class="form-section">
         <h2 data-i18n="settings">Configurações</h2>
-        
+
         <div class="config-group">
           <div class="config-header" onclick="toggleConfigGroup('language')">
             <h3 data-i18n="language">Idioma</h3>
@@ -253,7 +361,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="config-group">
           <div class="config-header" onclick="toggleConfigGroup('preforms')">
             <h3 data-i18n="preforms">Pre-forms</h3>
@@ -279,7 +387,7 @@
             <div id="preformsList"></div>
           </div>
         </div>
-        
+
         <div class="config-group">
           <div class="config-header" onclick="toggleConfigGroup('appearance')">
             <h3 data-i18n="appearance">Aparência</h3>
@@ -315,7 +423,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="config-group">
           <div class="config-header" onclick="toggleConfigGroup('personal')">
             <h3 data-i18n="personalData">Dados Pessoais</h3>
@@ -344,7 +452,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="config-group">
           <div class="config-header" onclick="toggleConfigGroup('paths')">
             <h3>Caminhos de Salvamento</h3>
@@ -361,30 +469,36 @@
                 <input id="pathRecibos" type="text" placeholder="D:\pasta\recibos" />
               </div>
             </div>
+            <div class="row row-1">
+              <div>
+                <label for="pathCobrancas">Pasta das Cobranças de Visita</label>
+                <input id="pathCobrancas" type="text" placeholder="D:\pasta\cobrancas" />
+              </div>
+            </div>
           </div>
         </div>
-        
+
         <div class="actions">
           <button type="button" class="btn primary" id="saveConfigBtn" data-i18n="saveSettings">Salvar Configurações</button>
         </div>
         <div id="configMsg" class="message"></div>
       </div>
-      
+
       <div class="preview-section">
         <h2 data-i18n="configPreview">Preview das Configurações</h2>
         <div id="configPreview">
           <h3 data-i18n="savedPreforms">Pre-forms Salvos</h3>
           <div id="preformsPreview"></div>
-          
+
           <h3 data-i18n="appearanceSettings">Configurações de Aparência</h3>
           <div id="appearancePreview"></div>
-          
+
           <h3 data-i18n="personalDataSettings">Dados Pessoais</h3>
           <div id="userInfoPreview"></div>
         </div>
       </div>
     </div>
-    
+
     <footer class="footer">
       <p>AutodocHub - <a href="https://github.com/AlvaroPereir4/AutoDocHub" target="_blank" rel="noopener">GitHub Repository</a></p>
     </footer>
@@ -392,7 +506,6 @@
   <script src="../static/translations.js"></script>
   <script src="../static/script.js" defer></script>
   <script>
-    // Aplicar configurações salvas ao carregar
     document.addEventListener('DOMContentLoaded', async () => {
       try {
         const res = await fetch('/api/config');
@@ -402,7 +515,7 @@
         console.log('Usando configurações padrão');
       }
     });
-    
+
     function applyConfig(config) {
       document.documentElement.setAttribute('data-theme', config.theme || 'light');
       document.documentElement.setAttribute('data-palette', config.colorPalette || 'default');
