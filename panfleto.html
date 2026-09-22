@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post Social - Álvaro Pereira</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #e8e4de;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    margin: 0;
+  }
+  .card {
+    width: 540px;
+    height: 675px;
+    box-sizing: border-box;
+    background: #ffffff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    border-radius: 12px;
+    border-bottom: 8px solid #ff9f43;
+  }
+  .top-bar {
+    background: #1a3a52;
+    background-image: linear-gradient(135deg, #1a3a52 0%, #2c5f8a 100%);
+    padding: 25px 32px 20px;
+    text-align: center;
+  }
+  .name {
+    font-size: 34px;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0 0 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+  .role {
+    font-size: 15px;
+    color: #ff9f43;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+  .body {
+    padding: 20px 32px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .intro-box {
+    background: #f4f7fa;
+    border-left: 6px solid #2c5f8a;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+  }
+  .intro {
+    font-size: 15px;
+    color: #2d3436;
+    line-height: 1.5;
+    margin: 0;
+    font-weight: 700;
+  }
+  .section-label {
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #ffffff;
+    background: #2c5f8a;
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-weight: 800;
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  .item-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .item-list li {
+    font-size: 13px;
+    color: #2d3436;
+    padding: 6px 0;
+    border-bottom: 2px solid #f0f0f0;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+  }
+  .item-list li:last-child {
+    border-bottom: none;
+  }
+  .check {
+    color: #ff9f43;
+    font-size: 16px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .footer-bar {
+    background: #f8f9fa;
+    padding: 18px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .phone {
+    font-size: 20px;
+    font-weight: 900;
+    color: #1a3a52;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .email-txt {
+    font-size: 12px;
+    color: #636e72;
+    margin-top: 2px;
+    font-weight: 700;
+  }
+  .cta-pill {
+    background: #ff9f43;
+    color: #1a3a52;
+    font-size: 13px;
+    font-weight: 900;
+    padding: 10px 20px;
+    border-radius: 50px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(255, 159, 67, 0.4);
+  }
+  .dl-area {
+    margin-top: 32px;
+  }
+  .dl-btn {
+    background: #1a3a52;
+    color: #ffffff;
+    border: none;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    border-radius: 8px;
+    font-family: inherit;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .dl-btn:hover {
+    background: #ff9f43;
+    color: #1a3a52;
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="ap-post">
+  <div class="top-bar">
+    <div class="name">Álvaro Pereira</div>
+    <div class="role">🔧 Especialista em Infiltrações</div>
+  </div>
+
+  <div class="body">
+    <div class="intro-box">
+      <p class="intro">Diagnóstico preciso e tratamento definitivo contra umidade. Materiais de alta performance, resultado garantido.</p>
+    </div>
+
+    <div class="cols">
+      <div>
+        <div class="section-label">Serviços</div>
+        <ul class="item-list">
+          <li><span class="check">✔</span>Paredes, tetos e pisos</li>
+          <li><span class="check">✔</span>Box e áreas externas</li>
+          <li><span class="check">✔</span>Rejuntamento selante</li>
+          <li><span class="check">✔</span>Ralos, soleiras e janelas</li>
+          <li><span class="check">✔</span>Reforço de cubas</li>
+          <li><span class="check">✔</span>Restauração de mármores</li>
+          <li><span class="check">✔</span>Correção de trincas</li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Diferenciais</div>
+        <ul class="item-list">
+          <li><span class="check">⭐</span>Mapeamento da origem</li>
+          <li><span class="check">⭐</span>Insumos anti-infiltração</li>
+          <li><span class="check">⭐</span>Soluções duradouras</li>
+          <li><span class="check">⭐</span>Execução técnica</li>
+          <li><span class="check">⭐</span>Obra limpa</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <div>
+      <div class="phone">📞 (11) 96042-0895</div>
+      <div class="email-txt">alvaropereirasantos9@gmail.com</div>
+    </div>
+    <div class="cta-pill">Orçamento</div>
+  </div>
+</div>
+
+<div class="dl-area">
+  <button class="dl-btn" id="dl-btn">↓ Baixar imagem</button>
+</div>
+
+<script>
+  document.getElementById('dl-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('dl-btn');
+    btn.textContent = 'PROCESSANDO...';
+    try {
+      const canvas = await html2canvas(document.getElementById('ap-post'), {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      });
+      const a = document.createElement('a');
+      a.download = 'alvaro_pereira_post.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+      btn.textContent = '✓ BAIXADO!';
+      setTimeout(() => { btn.textContent = '↓ BAIXAR IMAGEM'; }, 3000);
+    } catch(e) {
+      btn.textContent = '✗ ERRO';
+    }
+  });
+</script>
+
+</body>
+</html>

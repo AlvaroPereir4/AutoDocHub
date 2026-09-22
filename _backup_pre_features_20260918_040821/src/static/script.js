@@ -25,37 +25,6 @@ const parseLines = txt => txt.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
 const toBRDate = iso => iso ? new Date(iso + 'T03:00:00').toLocaleDateString('pt-BR') : '';
 const formatCurrency = num => `R$ ${Number(num || 0).toFixed(2).replace('.', ',')}`;
 
-// Datas de auditoria vem do Flask no formato RFC 1123 ("Fri, 18 Sep 2026 04:00:00 GMT")
-const toBRDateTime = value => {
-  if (!value) return '';
-  const d = new Date(value);
-  return isNaN(d) ? '' : d.toLocaleString('pt-BR', {
-    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-  });
-};
-
-// --- Documentos salvos: selo de edicao e acesso ao PDF ---
-function editedBadge(doc) {
-  if (!doc.atualizado_em) return '';
-  const when = toBRDateTime(doc.atualizado_em);
-  const label = when ? `${t('edited')} ${when}` : t('edited');
-  return ` <span class="badge-edited" title="${label}">${label}</span>`;
-}
-
-function pdfButton(type, doc) {
-  if (!doc.pdf_location) return '';
-  return `<button class="btn-edit" onclick="openDocPdf('${type}', '${doc._id}')">📄 ${t('openPdf')}</button>`;
-}
-
-function openDocPdf(type, id) {
-  window.open(`/api/${type}/${id}/pdf`, '_blank', 'noopener');
-}
-
-function pdfLink(type, id) {
-  if (!id) return '';
-  return `<br><a href="/api/${type}/${id}/pdf" target="_blank" rel="noopener">📄 ${t('openPdf')}</a>`;
-}
-
 function showMessage(element, message, type) {
     element.innerHTML = message;
     element.className = `message ${type}`;
@@ -197,7 +166,7 @@ async function saveOrcamento(e) {
     if (!res.ok) throw new Error(data.error || 'Falha ao salvar o orçamento.');
 
     const action = isEditing ? t('quoteUpdatedSuccess') : t('quoteSavedSuccess');
-    showMessage(msgDiv, `✅ ${action}<br><strong>${t('client')}:</strong> ${data.cliente}<br><strong>PDF:</strong> ${data.pdf_path}${pdfLink('orcamentos', data.id)}`, 'success');
+    showMessage(msgDiv, `✅ ${action}<br><strong>${t('client')}:</strong> ${data.cliente}<br><strong>PDF:</strong> ${data.pdf_path}`, 'success');
 
     cancelOrcEdit();
     loadOrcamentosSaved();
@@ -263,19 +232,18 @@ async function loadOrcamentosSaved() {
   try {
     const res = await fetch('/api/orcamentos');
     orcamentosData = await res.json();
-    filterOrcamentosSaved();
+    renderOrcamentosSaved(orcamentosData, listDiv);
+    v('searchOrcForm').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      const filtered = orcamentosData.filter(o =>
+        (o.cliente || '').toLowerCase().includes(q) ||
+        (o.endereco || '').toLowerCase().includes(q)
+      );
+      renderOrcamentosSaved(filtered, listDiv);
+    });
   } catch (err) {
     listDiv.innerHTML = `<p style="padding:12px;color:var(--error-text)">${err.message}</p>`;
   }
-}
-
-function filterOrcamentosSaved() {
-  const q = (v('searchOrcForm').value || '').toLowerCase();
-  const filtered = !q ? orcamentosData : orcamentosData.filter(o =>
-    (o.cliente || '').toLowerCase().includes(q) ||
-    (o.endereco || '').toLowerCase().includes(q)
-  );
-  renderOrcamentosSaved(filtered, v('orcSavedList'));
 }
 
 function renderOrcamentosSaved(data, container) {
@@ -289,11 +257,10 @@ function renderOrcamentosSaved(data, container) {
     item.className = 'doc-item';
     item.innerHTML = `
       <div class="doc-item-info">
-        <strong>${orc.cliente || 'Sem cliente'}</strong>${editedBadge(orc)}<br>
+        <strong>${orc.cliente || 'Sem cliente'}</strong><br>
         <small>${orc.endereco || ''} — ${toBRDate(orc.emissao)} — ${formatCurrency(orc.valor_total)}</small>
       </div>
       <div class="doc-item-actions">
-        ${pdfButton('orcamentos', orc)}
         <button class="btn-edit" onclick="startOrcEdit(${JSON.stringify(orc).replace(/"/g, '&quot;')})">✏️ Editar</button>
       </div>
     `;
@@ -315,7 +282,6 @@ v('orcCancelEditBtn').addEventListener('click', () => {
   cancelOrcEdit();
   resetOrcForm();
 });
-v('searchOrcForm').addEventListener('input', filterOrcamentosSaved);
 
 // ==========================================================
 // RECEIPTS SECTION
@@ -476,11 +442,10 @@ function renderRecibosSaved(data, container) {
     item.className = 'doc-item';
     item.innerHTML = `
       <div class="doc-item-info">
-        <strong>${rec.cliente || 'Sem cliente'}</strong>${editedBadge(rec)}<br>
+        <strong>${rec.cliente || 'Sem cliente'}</strong><br>
         <small>${rec.endereco || ''} — ${toBRDate(rec.data_recibo)} — ${formatCurrency(rec.valor_total)}</small>
       </div>
       <div class="doc-item-actions">
-        ${pdfButton('recibos', rec)}
         <button class="btn-edit" onclick="startReciboEdit(${JSON.stringify(rec).replace(/"/g, '&quot;')})">✏️ Editar</button>
       </div>
     `;
@@ -539,7 +504,7 @@ async function saveRecibo() {
         if (!res.ok) throw new Error(data.error || 'Falha ao salvar o recibo.');
 
         const action = isEditing ? t('receiptUpdatedSuccess') : t('receiptGeneratedSuccess');
-        showMessage(v('reciboMsg'), `✅ ${action}<br><strong>${t('client')}:</strong> ${data.cliente}<br><strong>PDF:</strong> ${data.pdf_path}${pdfLink('recibos', data.id)}`, 'success');
+        showMessage(v('reciboMsg'), `✅ ${action}<br><strong>${t('client')}:</strong> ${data.cliente}<br><strong>PDF:</strong> ${data.pdf_path}`, 'success');
 
         if (isEditing) cancelReciboEdit();
         loadRecibosSaved();
@@ -641,7 +606,7 @@ async function saveCobranca(e) {
     if (!res.ok) throw new Error(data.error || 'Falha ao salvar a cobrança.');
 
     const action = isEditing ? t('chargeUpdatedSuccess') : t('chargeSavedSuccess');
-    showMessage(msgDiv, `✅ ${action}<br><strong>${t('client')}:</strong> ${data.cliente}<br><strong>PDF:</strong> ${data.pdf_path}${pdfLink('cobrancas', data.id)}`, 'success');
+    showMessage(msgDiv, `✅ ${action}<br><strong>${t('client')}:</strong> ${data.cliente}<br><strong>PDF:</strong> ${data.pdf_path}`, 'success');
 
     cancelCobrancaEdit();
     loadCobrancasSaved();
@@ -699,19 +664,18 @@ async function loadCobrancasSaved() {
   try {
     const res = await fetch('/api/cobrancas');
     cobrancasData = await res.json();
-    filterCobrancasSaved();
+    renderCobrancasSaved(cobrancasData, listDiv);
+    v('searchCobranca').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      const filtered = cobrancasData.filter(c =>
+        (c.cliente || '').toLowerCase().includes(q) ||
+        (c.endereco || '').toLowerCase().includes(q)
+      );
+      renderCobrancasSaved(filtered, listDiv);
+    });
   } catch (err) {
     listDiv.innerHTML = `<p style="padding:12px;color:var(--error-text)">${err.message}</p>`;
   }
-}
-
-function filterCobrancasSaved() {
-  const q = (v('searchCobranca').value || '').toLowerCase();
-  const filtered = !q ? cobrancasData : cobrancasData.filter(c =>
-    (c.cliente || '').toLowerCase().includes(q) ||
-    (c.endereco || '').toLowerCase().includes(q)
-  );
-  renderCobrancasSaved(filtered, v('cobrancaSavedList'));
 }
 
 function renderCobrancasSaved(data, container) {
@@ -725,11 +689,10 @@ function renderCobrancasSaved(data, container) {
     item.className = 'doc-item';
     item.innerHTML = `
       <div class="doc-item-info">
-        <strong>${c.cliente || 'Sem cliente'}</strong>${editedBadge(c)}<br>
+        <strong>${c.cliente || 'Sem cliente'}</strong><br>
         <small>${c.endereco || ''} — ${toBRDate(c.data_cobranca)} — ${formatCurrency(c.valor_total)}</small>
       </div>
       <div class="doc-item-actions">
-        ${pdfButton('cobrancas', c)}
         <button class="btn-edit" onclick="startCobrancaEdit(${JSON.stringify(c).replace(/"/g, '&quot;')})">✏️ Editar</button>
       </div>
     `;
@@ -747,7 +710,6 @@ v('cobrancaCancelEditBtn').addEventListener('click', () => {
   cancelCobrancaEdit();
   resetCobrancaForm();
 });
-v('searchCobranca').addEventListener('input', filterCobrancasSaved);
 
 // ==========================================================
 // SETTINGS SECTION
@@ -1038,4 +1000,3 @@ window.toggleSavedDocs = toggleSavedDocs;
 window.startOrcEdit = startOrcEdit;
 window.startReciboEdit = startReciboEdit;
 window.startCobrancaEdit = startCobrancaEdit;
-window.openDocPdf = openDocPdf;

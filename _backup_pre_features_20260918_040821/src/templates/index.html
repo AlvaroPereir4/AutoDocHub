@@ -45,8 +45,6 @@
     .doc-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
     .btn-edit { cursor: pointer; border: 1px solid var(--line); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; background: var(--accent-light); color: var(--text); transition: opacity .2s; }
     .btn-edit:hover { opacity: 0.8; }
-    .badge-edited { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; letter-spacing: .02em; background: var(--accent-light); color: var(--muted); border: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
-    .doc-item.selected .badge-edited { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.4); }
     .orc-list { max-height: 400px; overflow-y: auto; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 8px; }
     .orc-item { padding: 12px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background-color .2s; font-size: 13px; }
     .orc-item:last-child { border-bottom: none; }
@@ -162,9 +160,9 @@
         <div class="config-group" style="margin-bottom:15px">
           <div class="config-header" onclick="toggleSavedDocs('orcSaved')">
             <span data-i18n="savedQuotes" style="font-weight:600">Orçamentos Salvos</span>
-            <span class="toggle-icon open">▼</span>
+            <span class="toggle-icon">▼</span>
           </div>
-          <div class="config-content open" id="orcSaved-content">
+          <div class="config-content" id="orcSaved-content">
             <input type="text" id="searchOrcForm" data-i18n="searchPlaceholder" placeholder="🔎 Buscar..." style="margin-bottom:8px"/>
             <div class="doc-list" id="orcSavedList"><p style="padding:12px;color:var(--muted);text-align:center">Carregando...</p></div>
           </div>

@@ -114,8 +114,6 @@ const translations = {
     // Loading/Error
     loadingQuotes: "Carregando orçamentos...",
     noQuotesFound: "Nenhum orçamento encontrado.",
-    openPdf: "Abrir PDF",
-    edited: "editado em",
 
     // Preview Labels
     services: "Serviços",
@@ -241,8 +239,6 @@ const translations = {
     // Loading/Error
     loadingQuotes: "Loading quotes...",
     noQuotesFound: "No quotes found.",
-    openPdf: "Open PDF",
-    edited: "edited on",
 
     // Preview Labels
     services: "Services",
