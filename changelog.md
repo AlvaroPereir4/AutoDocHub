@@ -1,3 +1,16 @@
+
+
+# Changelog
+
+[0.1.0]
+    - Feature: Technical minimalist UI redesign with monochrome palette, sharp 90° corners, and full-width layout.
+    - Feature: Direct inline PDF viewing route (/api/<doc_type>/<id>/pdf) and browser action buttons.
+    - Feature: Client-side pagination (30 items/page) for quotes, receipts, and visit charges lists.
+    - Feature: Canonical PDF file naming using doc ID suffix and auto-removal of stale PDFs on edit.
+    - Feature: Collapsible saved document lists starting minimized by default with explicit toggle badges.
+    - Feature: Visit Charge document generation and database persistence (visit_charge_docs).
+
+[0.0.1]
     - Feature: Client name flexible adjustment.
     - Feature: Permant camps of form.
     - Feature: Added file path to save in configs.

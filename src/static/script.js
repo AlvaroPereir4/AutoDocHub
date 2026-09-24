@@ -20,6 +20,36 @@ let orcEditingId = null;
 let reciboEditingId = null;
 let cobrancaEditingId = null;
 
+// Pagination state (30 items per page)
+const ITEMS_PER_PAGE = 30;
+let orcSavedPage = 1;
+let reciboSavedPage = 1;
+let cobrancaSavedPage = 1;
+
+function renderPaginationControls(containerId, currentPage, totalPages, totalItems, onPageChange) {
+  const container = v(containerId);
+  if (!container) return;
+  
+  if (totalItems <= ITEMS_PER_PAGE) {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+
+  container.style.display = 'flex';
+  container.className = 'pagination-bar';
+  container.innerHTML = `
+    <button type="button" class="btn secondary btn-sm" ${currentPage <= 1 ? 'disabled' : ''} id="${containerId}-prev">← Anterior</button>
+    <span class="pagination-info">Página <strong>${currentPage}</strong> de <strong>${totalPages}</strong> (${totalItems} itens)</span>
+    <button type="button" class="btn secondary btn-sm" ${currentPage >= totalPages ? 'disabled' : ''} id="${containerId}-next">Próxima →</button>
+  `;
+
+  const prevBtn = v(`${containerId}-prev`);
+  const nextBtn = v(`${containerId}-next`);
+  if (prevBtn) prevBtn.onclick = () => { if (currentPage > 1) onPageChange(currentPage - 1); };
+  if (nextBtn) nextBtn.onclick = () => { if (currentPage < totalPages) onPageChange(currentPage + 1); };
+}
+
 // --- Utility Functions ---
 const parseLines = txt => txt.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
 const toBRDate = iso => iso ? new Date(iso + 'T03:00:00').toLocaleDateString('pt-BR') : '';
@@ -44,7 +74,7 @@ function editedBadge(doc) {
 
 function pdfButton(type, doc) {
   if (!doc.pdf_location) return '';
-  return `<button class="btn-edit" onclick="openDocPdf('${type}', '${doc._id}')">📄 ${t('openPdf')}</button>`;
+  return `<button class="btn-edit" onclick="openDocPdf('${type}', '${doc._id}')">${t('openPdf')}</button>`;
 }
 
 function openDocPdf(type, id) {
@@ -53,7 +83,7 @@ function openDocPdf(type, id) {
 
 function pdfLink(type, id) {
   if (!id) return '';
-  return `<br><a href="/api/${type}/${id}/pdf" target="_blank" rel="noopener">📄 ${t('openPdf')}</a>`;
+  return `<br><a href="/api/${type}/${id}/pdf" target="_blank" rel="noopener">${t('openPdf')}</a>`;
 }
 
 function showMessage(element, message, type) {
@@ -269,13 +299,25 @@ async function loadOrcamentosSaved() {
   }
 }
 
-function filterOrcamentosSaved() {
+function filterOrcamentosSaved(resetPage = true) {
+  if (resetPage) orcSavedPage = 1;
   const q = (v('searchOrcForm').value || '').toLowerCase();
   const filtered = !q ? orcamentosData : orcamentosData.filter(o =>
     (o.cliente || '').toLowerCase().includes(q) ||
     (o.endereco || '').toLowerCase().includes(q)
   );
-  renderOrcamentosSaved(filtered, v('orcSavedList'));
+  
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+  if (orcSavedPage > totalPages) orcSavedPage = totalPages;
+
+  const start = (orcSavedPage - 1) * ITEMS_PER_PAGE;
+  const paginated = filtered.slice(start, start + ITEMS_PER_PAGE);
+
+  renderOrcamentosSaved(paginated, v('orcSavedList'));
+  renderPaginationControls('orcSavedPagination', orcSavedPage, totalPages, filtered.length, newPage => {
+    orcSavedPage = newPage;
+    filterOrcamentosSaved(false);
+  });
 }
 
 function renderOrcamentosSaved(data, container) {
@@ -294,7 +336,7 @@ function renderOrcamentosSaved(data, container) {
       </div>
       <div class="doc-item-actions">
         ${pdfButton('orcamentos', orc)}
-        <button class="btn-edit" onclick="startOrcEdit(${JSON.stringify(orc).replace(/"/g, '&quot;')})">✏️ Editar</button>
+        <button class="btn-edit" onclick="startOrcEdit(${JSON.stringify(orc).replace(/"/g, '&quot;')})">Editar</button>
       </div>
     `;
     container.appendChild(item);
@@ -459,10 +501,26 @@ async function loadRecibosSaved() {
   try {
     const res = await fetch('/api/recibos');
     recibosData = await res.json();
-    renderRecibosSaved(recibosData, listDiv);
+    filterRecibosSaved();
   } catch (err) {
     listDiv.innerHTML = `<p style="padding:12px;color:var(--error-text)">${err.message}</p>`;
   }
+}
+
+function filterRecibosSaved(resetPage = true) {
+  if (resetPage) reciboSavedPage = 1;
+  const filtered = recibosData;
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+  if (reciboSavedPage > totalPages) reciboSavedPage = totalPages;
+
+  const start = (reciboSavedPage - 1) * ITEMS_PER_PAGE;
+  const paginated = filtered.slice(start, start + ITEMS_PER_PAGE);
+
+  renderRecibosSaved(paginated, v('reciboSavedList'));
+  renderPaginationControls('reciboSavedPagination', reciboSavedPage, totalPages, filtered.length, newPage => {
+    reciboSavedPage = newPage;
+    filterRecibosSaved(false);
+  });
 }
 
 function renderRecibosSaved(data, container) {
@@ -481,7 +539,7 @@ function renderRecibosSaved(data, container) {
       </div>
       <div class="doc-item-actions">
         ${pdfButton('recibos', rec)}
-        <button class="btn-edit" onclick="startReciboEdit(${JSON.stringify(rec).replace(/"/g, '&quot;')})">✏️ Editar</button>
+        <button class="btn-edit" onclick="startReciboEdit(${JSON.stringify(rec).replace(/"/g, '&quot;')})">Editar</button>
       </div>
     `;
     container.appendChild(item);
@@ -705,13 +763,25 @@ async function loadCobrancasSaved() {
   }
 }
 
-function filterCobrancasSaved() {
+function filterCobrancasSaved(resetPage = true) {
+  if (resetPage) cobrancaSavedPage = 1;
   const q = (v('searchCobranca').value || '').toLowerCase();
   const filtered = !q ? cobrancasData : cobrancasData.filter(c =>
     (c.cliente || '').toLowerCase().includes(q) ||
     (c.endereco || '').toLowerCase().includes(q)
   );
-  renderCobrancasSaved(filtered, v('cobrancaSavedList'));
+  
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+  if (cobrancaSavedPage > totalPages) cobrancaSavedPage = totalPages;
+
+  const start = (cobrancaSavedPage - 1) * ITEMS_PER_PAGE;
+  const paginated = filtered.slice(start, start + ITEMS_PER_PAGE);
+
+  renderCobrancasSaved(paginated, v('cobrancaSavedList'));
+  renderPaginationControls('cobrancaSavedPagination', cobrancaSavedPage, totalPages, filtered.length, newPage => {
+    cobrancaSavedPage = newPage;
+    filterCobrancasSaved(false);
+  });
 }
 
 function renderCobrancasSaved(data, container) {
@@ -730,7 +800,7 @@ function renderCobrancasSaved(data, container) {
       </div>
       <div class="doc-item-actions">
         ${pdfButton('cobrancas', c)}
-        <button class="btn-edit" onclick="startCobrancaEdit(${JSON.stringify(c).replace(/"/g, '&quot;')})">✏️ Editar</button>
+        <button class="btn-edit" onclick="startCobrancaEdit(${JSON.stringify(c).replace(/"/g, '&quot;')})">Editar</button>
       </div>
     `;
     container.appendChild(item);
@@ -983,25 +1053,33 @@ v('preformText').addEventListener('keypress', e => {
 // --- Shared helpers ---
 function toggleSavedDocs(id) {
   const content = v(id + '-content');
-  const icon = content.previousElementSibling.querySelector('.toggle-icon');
+  const header = content.previousElementSibling;
+  const icon = header.querySelector('.toggle-icon');
+  const text = header.querySelector('.toggle-text');
   if (content.classList.contains('open')) {
     content.classList.remove('open');
-    icon.classList.remove('open');
+    if (icon) icon.classList.remove('open');
+    if (text) text.textContent = '[ EXPANDIR ]';
   } else {
     content.classList.add('open');
-    icon.classList.add('open');
+    if (icon) icon.classList.add('open');
+    if (text) text.textContent = '[ MINIMIZAR ]';
   }
 }
 
 function toggleConfigGroup(groupId) {
   const content = v(groupId + '-content');
-  const icon = content.previousElementSibling.querySelector('.toggle-icon');
+  const header = content.previousElementSibling;
+  const icon = header.querySelector('.toggle-icon');
+  const text = header.querySelector('.toggle-text');
   if (content.classList.contains('open')) {
     content.classList.remove('open');
-    icon.classList.remove('open');
+    if (icon) icon.classList.remove('open');
+    if (text) text.textContent = '[ EXPANDIR ]';
   } else {
     content.classList.add('open');
-    icon.classList.add('open');
+    if (icon) icon.classList.add('open');
+    if (text) text.textContent = '[ MINIMIZAR ]';
   }
 }
 

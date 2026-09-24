@@ -3,170 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AutodocHub</title>
-  <style>
-    :root { --bg: #f7f7f7; --card: #fff; --text: #111; --muted: #555; --line: #e0e0e0; --accent: #111; --accent-light: #f5f5f5; --success-bg: #e8f5e9; --success-border: #c8e6c9; --success-text: #2e7d32; --error-bg: #ffebee; --error-border: #ffcdd2; --error-text: #c62828; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); padding: 20px; font-size: 14px; }
-    h1 { font-size: 24px; margin-bottom: 20px; text-align: center; }
-    h2 { font-size: 18px; margin-bottom: 15px; border-bottom: 1px solid var(--line); padding-bottom: 10px; color: var(--muted); }
-    .wrap { max-width: 1300px; margin: 0 auto; }
-    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--line); }
-    .tab { padding: 10px 20px; cursor: pointer; border-radius: 8px 8px 0 0; background: transparent; font-weight: 600; border: 1px solid transparent; border-bottom: none; position: relative; top: 1px; }
-    .tab.active { background: var(--card); border-color: var(--line); border-bottom-color: var(--card); }
-    .tab-content { display: none; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .tab-content.active { display: grid; }
-    .form-section, .preview-section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,.05); max-height: 80vh; overflow-y: auto; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-    .row-1 { grid-template-columns: 1fr; }
-    .row-3 { grid-template-columns: 1fr 1fr 1fr; }
-    label { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: block; font-weight: 600; }
-    input, textarea, button { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; background: #fff; color: var(--text); transition: border-color .2s; }
-    input:focus, textarea:focus { border-color: var(--accent); outline: none; }
-    textarea { min-height: 80px; resize: vertical; }
-    .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-    .btn { cursor: pointer; border: none; font-weight: 600; padding: 10px 16px; border-radius: 8px; transition: opacity .2s; }
-    .btn:hover { opacity: 0.85; }
-    .btn.primary { background: var(--accent); color: #fff; }
-    .btn.secondary { background: var(--accent-light); color: var(--text); border: 1px solid var(--line); }
-    .btn.warning { background: #ff9800; color: #fff; }
-    .message { padding: 12px; border-radius: 8px; margin-top: 15px; display: none; }
-    .success { background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success-text); }
-    .error { background: var(--error-bg); border: 1px solid var(--error-border); color: var(--error-text); }
-    .money-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; align-items: end; margin-bottom: 15px; }
-    .saldo { padding: 10px; border: 1px dashed var(--line); border-radius: 8px; background: var(--accent-light); text-align: center; font-weight: bold; font-size: 16px; }
-    .doc-list { max-height: 400px; overflow-y: auto; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 8px; }
-    .doc-item { padding: 10px 12px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background-color .2s; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-    .doc-item:last-child { border-bottom: none; }
-    .doc-item:hover { background-color: var(--accent-light); }
-    .doc-item.selected { background-color: var(--accent); color: #fff; }
-    .doc-item.selected .btn { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.4); }
-    .doc-item-info { flex: 1; }
-    .doc-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
-    .btn-edit { cursor: pointer; border: 1px solid var(--line); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; background: var(--accent-light); color: var(--text); transition: opacity .2s; }
-    .btn-edit:hover { opacity: 0.8; }
-    .badge-edited { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; letter-spacing: .02em; background: var(--accent-light); color: var(--muted); border: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
-    .doc-item.selected .badge-edited { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.4); }
-    .orc-list { max-height: 400px; overflow-y: auto; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 8px; }
-    .orc-item { padding: 12px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background-color .2s; font-size: 13px; }
-    .orc-item:last-child { border-bottom: none; }
-    .orc-item:hover { background-color: var(--accent-light); }
-    .orc-item.selected { background-color: var(--accent); color: #fff; }
-    #searchOrc, #searchCobranca { margin-bottom: 10px; }
-    pre { white-space: pre-wrap; word-wrap: break-word; font-family: 'Courier New', Courier, monospace; font-size: inherit; line-height: 1.6; color: var(--text); background: var(--card); padding: 15px; border-radius: 8px; border: 1px solid var(--line); }
-    #reciboEditor { margin-bottom: 20px; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--accent-light); }
-    #reciboEditor h3 { margin-bottom: 15px; color: var(--muted); font-size: 16px; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .preform-item { padding: 8px; margin: 5px 0; border: 1px solid var(--line); border-radius: 6px; background: var(--accent-light); display: flex; justify-content: space-between; align-items: center; }
-    .preform-item button { padding: 4px 8px; font-size: 12px; }
-    .preform-selector { margin: 10px 0; }
-    .preform-selector select { margin-right: 10px; }
-    h3 { font-size: 16px; margin: 20px 0 10px 0; color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 5px; }
-    h4 { font-size: 14px; margin: 10px 0 5px 0; color: var(--muted); font-weight: 600; }
-    select { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; background: var(--card); color: var(--text); }
-    #configPreview { padding: 15px; background: var(--accent-light); border-radius: 8px; border: 1px solid var(--line); }
-    .config-group { margin-bottom: 15px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-    .config-header { padding: 12px 15px; background: var(--accent-light); cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
-    .config-header:hover { background: var(--line); }
-    .config-content { padding: 15px; display: none; }
-    .config-content.open { display: block; }
-    .toggle-icon { transition: transform 0.3s; }
-    .config-group .toggle-icon { transform: rotate(-90deg); }
-    .config-group .toggle-icon.open { transform: rotate(0deg); }
-    .edit-mode-banner { background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 10px 15px; margin-bottom: 15px; font-size: 13px; color: #856404; display: none; }
-    .edit-mode-banner.active { display: block; }
-
-    /* Temas */
-    [data-theme="dark"] {
-      --bg: #121212;
-      --card: #1e1e1e;
-      --text: #ffffff;
-      --muted: #b0b0b0;
-      --line: #333333;
-      --accent: #bb86fc;
-      --accent-light: #2a2a2a;
-      --success-bg: #1b5e20;
-      --success-border: #2e7d32;
-      --success-text: #4caf50;
-      --error-bg: #b71c1c;
-      --error-border: #c62828;
-      --error-text: #f44336;
-    }
-    [data-theme="intermediate"] {
-      --bg: #f5f5f5;
-      --card: #fafafa;
-      --text: #212121;
-      --muted: #757575;
-      --line: #e0e0e0;
-      --accent: #1976d2;
-      --accent-light: #f3f4f6;
-    }
-
-    /* Paletas */
-    [data-palette="blue"] { --accent: #2196f3; --accent-light: #e3f2fd; }
-    [data-palette="green"] { --accent: #4caf50; --accent-light: #e8f5e9; }
-    [data-palette="purple"] { --accent: #9c27b0; --accent-light: #f3e5f5; }
-    [data-palette="orange"] { --accent: #ff9800; --accent-light: #fff3e0; }
-    [data-palette="red"] { --accent: #f44336; --accent-light: #ffebee; }
-
-    [data-theme="dark"] input,
-    [data-theme="dark"] textarea,
-    [data-theme="dark"] select {
-      background: #2a2a2a;
-      color: #ffffff;
-      border-color: #404040;
-    }
-    [data-theme="dark"] input:focus,
-    [data-theme="dark"] textarea:focus,
-    [data-theme="dark"] select:focus {
-      border-color: var(--accent);
-    }
-    [data-theme="dark"] .preform-item {
-      background: #3a3a3a;
-      border-color: #404040;
-    }
-    [data-theme="dark"] .edit-mode-banner {
-      background: #3a2e00;
-      border-color: #ffc107;
-      color: #ffc107;
-    }
-
-    [data-theme="intermediate"] input,
-    [data-theme="intermediate"] textarea,
-    [data-theme="intermediate"] select {
-      background: #ffffff;
-      color: #333333;
-    }
-
-    .footer { text-align: center; padding: 20px; margin-top: 30px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
-    .footer a { color: var(--accent); text-decoration: none; }
-    .footer a:hover { text-decoration: underline; }
-  </style>
+  <title>AutodocHub - Sistema Profissional de Orçamentos e Recibos</title>
+  <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
   <div class="wrap">
-    <h1>AutodocHub 📝</h1>
+    <!-- Header Bar -->
+    <div class="header-bar">
+      <div class="brand-title">
+        <span>AutodocHub</span>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
     <div class="tabs">
       <div class="tab active" data-tab="orcamentos" data-i18n="quotes">Orçamentos</div>
       <div class="tab" data-tab="recibos" data-i18n="receipts">Recibos</div>
       <div class="tab" data-tab="cobrancas" data-i18n="visitCharges">Cobranças de Visita</div>
-      <div class="tab" data-tab="config" data-i18n="config">Config</div>
+      <div class="tab" data-tab="config" data-i18n="config">Configurações</div>
     </div>
 
     <!-- ==================== ORÇAMENTOS ==================== -->
     <div class="tab-content active" id="orcamentos">
       <div class="form-section">
-        <div class="edit-mode-banner" id="orcEditBanner">✏️ Modo edição — editando orçamento existente</div>
+        <div class="edit-mode-banner" id="orcEditBanner">Modo edição — editando orçamento existente</div>
         <h2 data-i18n="createQuote">Criar Orçamento</h2>
 
         <div class="config-group" style="margin-bottom:15px">
           <div class="config-header" onclick="toggleSavedDocs('orcSaved')">
-            <span data-i18n="savedQuotes" style="font-weight:600">Orçamentos Salvos</span>
-            <span class="toggle-icon open">▼</span>
+            <span data-i18n="savedQuotes">Orçamentos Salvos</span>
+            <span class="toggle-badge"><span class="toggle-text">[ EXPANDIR ]</span> <span class="toggle-icon">▼</span></span>
           </div>
-          <div class="config-content open" id="orcSaved-content">
-            <input type="text" id="searchOrcForm" data-i18n="searchPlaceholder" placeholder="🔎 Buscar..." style="margin-bottom:8px"/>
+          <div class="config-content" id="orcSaved-content">
+            <input type="text" id="searchOrcForm" data-i18n="searchPlaceholder" placeholder="Buscar por cliente ou endereço..." style="margin-bottom:8px"/>
             <div class="doc-list" id="orcSavedList"><p style="padding:12px;color:var(--muted);text-align:center">Carregando...</p></div>
+            <div class="pagination-bar" id="orcSavedPagination"></div>
           </div>
         </div>
 
@@ -208,12 +79,12 @@
             </div>
           </div>
           <div class="row-3">
-            <div><label for="contato_nome" data-i18n="yourName">Seu Nome</label><input id="contato_nome" name="contato_nome" type="text" readonly style="background-color: var(--accent-light);" required /></div>
-            <div><label for="contato_tel" data-i18n="yourPhone">Seu Telefone</label><input id="contato_tel" name="contato_tel" type="tel" readonly style="background-color: var(--accent-light);" required /></div>
-            <div><label for="contato_email" data-i18n="yourEmail">Seu E-mail</label><input id="contato_email" name="contato_email" type="email" readonly style="background-color: var(--accent-light);" required /></div>
+            <div><label for="contato_nome" data-i18n="yourName">Seu Nome</label><input id="contato_nome" name="contato_nome" type="text" readonly required /></div>
+            <div><label for="contato_tel" data-i18n="yourPhone">Seu Telefone</label><input id="contato_tel" name="contato_tel" type="tel" readonly required /></div>
+            <div><label for="contato_email" data-i18n="yourEmail">Seu E-mail</label><input id="contato_email" name="contato_email" type="email" readonly required /></div>
           </div>
           <div class="row row-1">
-            <div><label for="contato_pix" data-i18n="yourPix">Sua Chave PIX</label><input id="contato_pix" name="contato_pix" type="text" readonly style="background-color: var(--accent-light);" data-i18n="pixPlaceholder" placeholder="CPF, CNPJ, e-mail, etc."/></div>
+            <div><label for="contato_pix" data-i18n="yourPix">Sua Chave PIX</label><input id="contato_pix" name="contato_pix" type="text" readonly data-i18n="pixPlaceholder" placeholder="CPF, CNPJ, e-mail, etc."/></div>
           </div>
           <div class="actions">
             <button type="button" class="btn secondary" id="orcCancelEditBtn" style="display:none" data-i18n="cancelEdit">Cancelar Edição</button>
@@ -243,17 +114,18 @@
         <div style="margin-top:25px; border-top:1px solid var(--line); padding-top:20px;">
           <div class="config-group">
             <div class="config-header" onclick="toggleSavedDocs('reciboSaved')">
-              <span data-i18n="savedReceipts" style="font-weight:600">Recibos Salvos</span>
-              <span class="toggle-icon">▼</span>
+              <span data-i18n="savedReceipts">Recibos Salvos</span>
+              <span class="toggle-badge"><span class="toggle-text">[ EXPANDIR ]</span> <span class="toggle-icon">▼</span></span>
             </div>
             <div class="config-content" id="reciboSaved-content">
               <div class="doc-list" id="reciboSavedList"><p style="padding:12px;color:var(--muted);text-align:center">Carregando...</p></div>
+              <div class="pagination-bar" id="reciboSavedPagination"></div>
             </div>
           </div>
         </div>
       </div>
       <div class="preview-section">
-        <div class="edit-mode-banner" id="reciboEditBanner">✏️ Modo edição — editando recibo existente</div>
+        <div class="edit-mode-banner" id="reciboEditBanner">Modo edição — editando recibo existente</div>
         <h2 data-i18n="editAndPreview">Editar e Preview do Recibo</h2>
         <div id="reciboEditor" style="display: none;">
           <div class="row">
@@ -287,17 +159,18 @@
     <!-- ==================== COBRANÇAS DE VISITA ==================== -->
     <div class="tab-content" id="cobrancas">
       <div class="form-section">
-        <div class="edit-mode-banner" id="cobrancaEditBanner">✏️ Modo edição — editando cobrança existente</div>
+        <div class="edit-mode-banner" id="cobrancaEditBanner">Modo edição — editando cobrança existente</div>
         <h2 data-i18n="createVisitCharge">Criar Cobrança de Visita</h2>
 
         <div class="config-group" style="margin-bottom:15px">
           <div class="config-header" onclick="toggleSavedDocs('cobrancaSaved')">
-            <span data-i18n="savedCharges" style="font-weight:600">Cobranças Salvas</span>
-            <span class="toggle-icon">▼</span>
+            <span data-i18n="savedCharges">Cobranças Salvas</span>
+            <span class="toggle-badge"><span class="toggle-text">[ EXPANDIR ]</span> <span class="toggle-icon">▼</span></span>
           </div>
           <div class="config-content" id="cobrancaSaved-content">
-            <input type="text" id="searchCobranca" data-i18n="searchPlaceholder" placeholder="🔎 Buscar..." style="margin-bottom:8px"/>
+            <input type="text" id="searchCobranca" data-i18n="searchPlaceholder" placeholder="Buscar..." style="margin-bottom:8px"/>
             <div class="doc-list" id="cobrancaSavedList"><p style="padding:12px;color:var(--muted);text-align:center">Carregando...</p></div>
+            <div class="pagination-bar" id="cobrancaSavedPagination"></div>
           </div>
         </div>
 
@@ -323,9 +196,9 @@
             </div>
           </div>
           <div class="row-3">
-            <div><label for="cob_contato_nome" data-i18n="yourName">Seu Nome</label><input id="cob_contato_nome" type="text" readonly style="background-color: var(--accent-light);" /></div>
-            <div><label for="cob_contato_tel" data-i18n="yourPhone">Seu Telefone</label><input id="cob_contato_tel" type="tel" readonly style="background-color: var(--accent-light);" /></div>
-            <div><label for="cob_contato_pix" data-i18n="yourPix">Sua Chave PIX</label><input id="cob_contato_pix" type="text" readonly style="background-color: var(--accent-light);" /></div>
+            <div><label for="cob_contato_nome" data-i18n="yourName">Seu Nome</label><input id="cob_contato_nome" type="text" readonly /></div>
+            <div><label for="cob_contato_tel" data-i18n="yourPhone">Seu Telefone</label><input id="cob_contato_tel" type="tel" readonly /></div>
+            <div><label for="cob_contato_pix" data-i18n="yourPix">Sua Chave PIX</label><input id="cob_contato_pix" type="text" readonly /></div>
           </div>
           <div class="actions">
             <button type="button" class="btn secondary" id="cobrancaCancelEditBtn" style="display:none" data-i18n="cancelEdit">Cancelar Edição</button>
@@ -341,7 +214,7 @@
       </div>
     </div>
 
-    <!-- ==================== CONFIG ==================== -->
+    <!-- ==================== CONFIGURACÕES ==================== -->
     <div class="tab-content" id="config">
       <div class="form-section">
         <h2 data-i18n="settings">Configurações</h2>
@@ -420,7 +293,7 @@
             <div class="row">
               <div>
                 <label for="fontSize" data-i18n="fontSize">Tamanho da Fonte (px)</label>
-                <input id="fontSize" type="number" min="12" max="20" value="14" />
+                <input id="fontSize" type="number" min="12" max="20" value="13" />
               </div>
             </div>
           </div>
@@ -502,11 +375,11 @@
     </div>
 
     <footer class="footer">
-      <p>AutodocHub - <a href="https://github.com/AlvaroPereir4/AutoDocHub" target="_blank" rel="noopener">GitHub Repository</a></p>
+      <p>AutodocHub • <a href="https://github.com/AlvaroPereir4/AutoDocHub" target="_blank" rel="noopener">GitHub Repository</a></p>
     </footer>
   </div>
-  <script src="../static/translations.js"></script>
-  <script src="../static/script.js" defer></script>
+  <script src="/static/translations.js"></script>
+  <script src="/static/script.js" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       try {
@@ -521,7 +394,7 @@
     function applyConfig(config) {
       document.documentElement.setAttribute('data-theme', config.theme || 'light');
       document.documentElement.setAttribute('data-palette', config.colorPalette || 'default');
-      document.body.style.fontSize = (config.fontSize || 14) + 'px';
+      document.body.style.fontSize = (config.fontSize || 13) + 'px';
     }
   </script>
 </body>
