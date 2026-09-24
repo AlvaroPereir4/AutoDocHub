@@ -2,9 +2,10 @@ const translations = {
   ptbr: {
     // Tabs
     quotes: "Orçamentos",
-    receipts: "Recibos", 
+    receipts: "Recibos",
+    visitCharges: "Cobranças de Visita",
     config: "Config",
-    
+
     // Quote Form
     createQuote: "Criar Orçamento",
     client: "Cliente",
@@ -29,7 +30,8 @@ const translations = {
     saveAndGenerate: "Salvar e Gerar Orçamento",
     quotePreview: "Preview do Orçamento",
     previewPlaceholder: "Preencha o formulário para ver o preview aqui.",
-    
+    savedQuotes: "Orçamentos Salvos",
+
     // Receipt Form
     generateReceipt: "Gerar Recibo",
     searchPlaceholder: "🔎 Buscar por cliente, endereço ou ID...",
@@ -42,7 +44,25 @@ const translations = {
     providerName: "Nome do Prestador",
     saveAndGenerateReceipt: "Salvar e Gerar Recibo",
     receiptPreviewPlaceholder: "Selecione um orçamento da lista para gerar o recibo.",
-    
+    savedReceipts: "Recibos Salvos",
+
+    // Visit Charge Form
+    createVisitCharge: "Criar Cobrança de Visita",
+    serviceDescription: "Descrição do Serviço Realizado (um item por linha)",
+    serviceDescPlaceholder: "Ex: Visita técnica para avaliação...",
+    saveAndGenerateCharge: "Salvar e Gerar Cobrança",
+    chargePreview: "Preview da Cobrança",
+    savedCharges: "Cobranças Salvas",
+    noChargesFound: "Nenhuma cobrança encontrada.",
+    chargeSavedSuccess: "Cobrança salva com sucesso!",
+    chargeUpdatedSuccess: "Cobrança atualizada com sucesso!",
+
+    // Edit
+    cancelEdit: "Cancelar Edição",
+    saveEdit: "Salvar Edição",
+    quoteUpdatedSuccess: "Orçamento atualizado com sucesso!",
+    receiptUpdatedSuccess: "Recibo atualizado com sucesso!",
+
     // Config Form
     settings: "Configurações",
     preforms: "Pre-forms",
@@ -73,7 +93,7 @@ const translations = {
     portuguese: "Português",
     english: "English",
     saveSettings: "Salvar Configurações",
-    
+
     // Config Preview
     configPreview: "Preview das Configurações",
     savedPreforms: "Pre-forms Salvos",
@@ -81,7 +101,7 @@ const translations = {
     personalDataSettings: "Dados Pessoais",
     noPreforms: "Nenhum pre-form configurado.",
     notDefined: "Não definido",
-    
+
     // Messages
     quoteSavedSuccess: "Orçamento salvo com sucesso!",
     receiptGeneratedSuccess: "Recibo gerado com sucesso!",
@@ -90,11 +110,13 @@ const translations = {
     enterPreformText: "Digite um texto para o pre-form",
     remove: "Remover",
     selectPreform: "Selecionar pre-form...",
-    
+
     // Loading/Error
     loadingQuotes: "Carregando orçamentos...",
     noQuotesFound: "Nenhum orçamento encontrado.",
-    
+    openPdf: "Abrir PDF",
+    edited: "editado em",
+
     // Preview Labels
     services: "Serviços",
     name: "Nome",
@@ -103,13 +125,14 @@ const translations = {
     pix: "PIX",
     font: "Fonte"
   },
-  
+
   en: {
     // Tabs
     quotes: "Quotes",
     receipts: "Receipts",
+    visitCharges: "Visit Charges",
     config: "Config",
-    
+
     // Quote Form
     createQuote: "Create Quote",
     client: "Client",
@@ -134,7 +157,8 @@ const translations = {
     saveAndGenerate: "Save and Generate Quote",
     quotePreview: "Quote Preview",
     previewPlaceholder: "Fill the form to see preview here.",
-    
+    savedQuotes: "Saved Quotes",
+
     // Receipt Form
     generateReceipt: "Generate Receipt",
     searchPlaceholder: "🔎 Search by client, address or ID...",
@@ -147,7 +171,25 @@ const translations = {
     providerName: "Provider Name",
     saveAndGenerateReceipt: "Save and Generate Receipt",
     receiptPreviewPlaceholder: "Select a quote from the list to generate receipt.",
-    
+    savedReceipts: "Saved Receipts",
+
+    // Visit Charge Form
+    createVisitCharge: "Create Visit Charge",
+    serviceDescription: "Service Description (one item per line)",
+    serviceDescPlaceholder: "Ex: Technical visit for assessment...",
+    saveAndGenerateCharge: "Save and Generate Charge",
+    chargePreview: "Charge Preview",
+    savedCharges: "Saved Charges",
+    noChargesFound: "No charges found.",
+    chargeSavedSuccess: "Charge saved successfully!",
+    chargeUpdatedSuccess: "Charge updated successfully!",
+
+    // Edit
+    cancelEdit: "Cancel Edit",
+    saveEdit: "Save Edit",
+    quoteUpdatedSuccess: "Quote updated successfully!",
+    receiptUpdatedSuccess: "Receipt updated successfully!",
+
     // Config Form
     settings: "Settings",
     preforms: "Pre-forms",
@@ -178,7 +220,7 @@ const translations = {
     portuguese: "Português",
     english: "English",
     saveSettings: "Save Settings",
-    
+
     // Config Preview
     configPreview: "Settings Preview",
     savedPreforms: "Saved Pre-forms",
@@ -186,7 +228,7 @@ const translations = {
     personalDataSettings: "Personal Data",
     noPreforms: "No pre-forms configured.",
     notDefined: "Not defined",
-    
+
     // Messages
     quoteSavedSuccess: "Quote saved successfully!",
     receiptGeneratedSuccess: "Receipt generated successfully!",
@@ -195,11 +237,13 @@ const translations = {
     enterPreformText: "Enter text for pre-form",
     remove: "Remove",
     selectPreform: "Select pre-form...",
-    
+
     // Loading/Error
     loadingQuotes: "Loading quotes...",
     noQuotesFound: "No quotes found.",
-    
+    openPdf: "Open PDF",
+    edited: "edited on",
+
     // Preview Labels
     services: "Services",
     name: "Name",

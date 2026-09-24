@@ -9,7 +9,7 @@ class Config:
         self.preforms = preforms or {"servicos": [], "observacoes": []}
         self.user_info = user_info or {"nome": "", "telefone": "", "email": "", "pix": ""}
         self.language = language if language in ["ptbr", "en"] else "ptbr"
-        self.save_paths = save_paths or {"orcamentos": r"D:\general_data\orcamentos", "recibos": r"D:\general_data\recibos"}
+        self.save_paths = save_paths or {"orcamentos": r"D:\general_data\orcamentos", "recibos": r"D:\general_data\recibos", "cobrancas": r"D:\general_data\cobrancas"}
     
     def to_dict(self):
         return {
@@ -33,7 +33,7 @@ class Config:
             preforms=data.get("preforms", {"servicos": [], "observacoes": []}),
             user_info=data.get("userInfo", {"nome": "", "telefone": "", "email": "", "pix": ""}),
             language=data.get("language", "ptbr"),
-            save_paths=data.get("savePaths", {"orcamentos": r"D:\general_data\orcamentos", "recibos": r"D:\general_data\recibos"})
+            save_paths=data.get("savePaths", {"orcamentos": r"D:\general_data\orcamentos", "recibos": r"D:\general_data\recibos", "cobrancas": r"D:\general_data\cobrancas"})
         )
     
     def validate(self):
@@ -88,7 +88,8 @@ class Config:
             language="ptbr",
             save_paths={
                 "orcamentos": r"D:\general_data\orcamentos",
-                "recibos": r"D:\general_data\recibos"
+                "recibos": r"D:\general_data\recibos",
+                "cobrancas": r"D:\general_data\cobrancas"
             }
         )
     

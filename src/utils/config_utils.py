@@ -9,6 +9,6 @@ def get_save_paths():
         config = config_collection.find_one({}, sort=[('_id', -1)])
         if config and 'savePaths' in config:
             return config['savePaths']
-        return {"orcamentos": r"D:\general_data\orcamentos", "recibos": r"D:\general_data\recibos"}
+        return {"orcamentos": r"D:\general_data\orcamentos", "recibos": r"D:\general_data\recibos", "cobrancas": r"D:\general_data\cobrancas"}
     except:
-        return {"orcamentos": r"D:\general_data\orcamentos", "recibos": r"D:\general_data\recibos"}
+        return {"orcamentos": r"D:\general_data\orcamentos", "recibos": r"D:\general_data\recibos", "cobrancas": r"D:\general_data\cobrancas"}

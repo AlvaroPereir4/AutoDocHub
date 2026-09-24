@@ -1,7 +1,8 @@
 from src.utils.imports import *
 from src.utils.config_utils import get_save_paths
+from src.utils.pdf_paths import build_pdf_path
 
-def parser(data: dict) -> (dict, str):
+def parser(data: dict, doc_id) -> (dict, str):
     service = Service(service_type="Rejunte", service=data.get("servico"))
     quout = Quote(tittle=data.get("titulo"), client=data.get("cliente"), location=data.get("endereco"),
                   service=service, service_value=data.get("valor_total"), init_deposit=data.get("sinal"),
@@ -14,25 +15,16 @@ def parser(data: dict) -> (dict, str):
                       "contato": {"nome": contact.name, "telefone": contact.tel, "email": contact.email,
                                   "pix": contact.pix}}
 
-    file_path = file_adjustments(quout)
+    file_path = file_adjustments(quout, doc_id)
     return orc_data, file_path
 
-def file_adjustments(quot: Quote) -> str:
-    ano, mes, _ = quot.quote_date.split('-')
+def file_adjustments(quot: Quote, doc_id) -> str:
     save_paths = get_save_paths()
     output_dir = save_paths.get('orcamentos', r'D:\general_data\orcamentos')
-    target_dir = os.path.join(output_dir, ano, mes)
+    return build_pdf_path(output_dir, 'orc', quot.client, quot.quote_date, doc_id)
 
-    if not os.path.exists(target_dir):
-        os.makedirs(target_dir)
-
-    client_name = quot.client if quot.client and quot.client.strip() else 'cliente'
-    filename = f"orc_{client_name}_{quot.quote_date}.pdf"
-    file_path = os.path.join(target_dir, filename)
-    return file_path
-
-def generate_pdf(data: dict) -> str:
-    orc_data, file_path = parser(data)
+def generate_pdf(data: dict, doc_id) -> str:
+    orc_data, file_path = parser(data, doc_id)
     doc = SimpleDocTemplate(file_path, pagesize=A4, rightMargin=40, leftMargin=40, topMargin=40, bottomMargin=40)
     elements = quouteStyle(orc_data)
     doc.build(elements)
