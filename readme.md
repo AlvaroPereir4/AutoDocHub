@@ -173,15 +173,6 @@ The application uses MongoDB with the database `autodochub_db` containing three 
 - **Dynamic Switching**: Change language without restart
 - **Persistent Settings**: Language preference saved automatically
 
-## Recent Updates
-
-- **Technical Minimalist UI**: High-contrast black, white, and gray monochrome aesthetic with sharp 90-degree corners, typography pairing (`Inter` and `JetBrains Mono`), and full-width fluid layout.
-- **Inline PDF Viewing**: Dedicated `/api/<doc_type>/<id>/pdf` route to serve generated PDF files directly in browser tabs via "Abrir PDF" buttons.
-- **Client-side Pagination**: High-performance pagination rendering 30 items per page for quotes, receipts, and visit charges lists.
-- **Stable PDF Naming & Cleanup**: PDF file paths incorporate sanitized client names, dates, and document ID suffixes to prevent overwrites, with stale PDF auto-removal on edits.
-- **Collapsible Saved Documents**: Saved document lists start minimized by default with explicit `[ EXPANDIR ]` / `[ MINIMIZAR ]` toggle indicators.
-- **Visit Charge Documents**: Full support for generating and managing visit charge quotes (`visit_charge_docs`).
-
 ## Documentation
 
 [Detailed Documentation](https://www.notion.so/AutodocHub-23a0166bb9f6803195d5f5eb44f851b7?source=copy_link)
